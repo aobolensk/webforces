@@ -10,7 +10,10 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/3.0/ref/settings/
 """
 
+import json
 import os
+
+from django.core.management.utils import get_random_secret_key
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -19,8 +22,18 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/3.0/howto/deployment/checklist/
 
-# SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = '=r4n2y93xb^i$qp&lza=e5+t!7!u_eo9gw@uo3fwsr$=fj)i8h'
+try:
+    with open("secret.json", "r") as secrets_file:
+        secrets = json.load(secrets_file)
+    SECRET_KEY = secrets['DJANGO_SECRET_KEY']
+except Exception:
+    secrets = {
+        'DJANGO_SECRET_KEY': get_random_secret_key()
+    }
+    with open("secret.json", "w") as secrets_file:
+        json.dump(secrets, secrets_file)
+    SECRET_KEY = secrets['DJANGO_SECRET_KEY']
+
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True

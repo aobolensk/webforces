@@ -4,3 +4,6 @@ __pycache__
 
 # DB
 db.sqlite3
+
+# Secrets
+secret.json
