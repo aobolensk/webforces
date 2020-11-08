@@ -2,6 +2,9 @@
 __pycache__
 *.pyc
 
+# Editors/IDE
+.vscode
+
 # DB
 db.sqlite3
 
