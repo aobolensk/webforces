@@ -1,10 +1,13 @@
-from django.http import JsonResponse
-from django.contrib.auth.decorators import login_required
+from rest_framework.permissions import IsAuthenticated
+from rest_framework.response import Response
+from rest_framework.views import APIView
 
 
-@login_required
-def stats(request):
-    stats = {
-        "name": "webforces",
-    }
-    return JsonResponse(stats)
+class StatsView(APIView):
+    permission_classes = (IsAuthenticated,)
+
+    def get(self, request):
+        stats = {
+            "name": "webforces",
+        }
+        return Response(stats)
