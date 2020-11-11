@@ -98,6 +98,9 @@ DATABASES = {
     }
 }
 
+MONGODB_PROPERTIES = {
+    'production_url': 'mongodb://localhost:27017/webforces'
+}
 
 # Password validation
 # https://docs.djangoproject.com/en/3.0/ref/settings/#auth-password-validators
