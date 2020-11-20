@@ -11,7 +11,11 @@
 from PyQt5 import QtCore, QtGui, QtWidgets
 
 
-class Ui_MainWindow(object):
+class Ui_LoginWindow(object):
+    def __init__(self):
+        super().__init__()
+        self.setupUi(self)
+
     def setupUi(self, MainWindow):
         MainWindow.setObjectName("MainWindow")
         MainWindow.resize(800, 600)
@@ -21,19 +25,19 @@ class Ui_MainWindow(object):
         MainWindow.setFont(font)
         self.centralwidget = QtWidgets.QWidget(MainWindow)
         self.centralwidget.setObjectName("centralwidget")
-        self.lineEdit = QtWidgets.QLineEdit(self.centralwidget)
-        self.lineEdit.setGeometry(QtCore.QRect(225, 170, 350, 40))
+        self.loginEdit = QtWidgets.QLineEdit(self.centralwidget)
+        self.loginEdit.setGeometry(QtCore.QRect(225, 170, 350, 40))
         font = QtGui.QFont()
         font.setPointSize(20)
-        self.lineEdit.setFont(font)
-        self.lineEdit.setText("")
-        self.lineEdit.setObjectName("lineEdit")
-        self.lineEdit_2 = QtWidgets.QLineEdit(self.centralwidget)
-        self.lineEdit_2.setGeometry(QtCore.QRect(225, 260, 350, 40))
+        self.loginEdit.setFont(font)
+        self.loginEdit.setText("")
+        self.loginEdit.setObjectName("loginEdit")
+        self.passwordEdit = QtWidgets.QLineEdit(self.centralwidget)
+        self.passwordEdit.setGeometry(QtCore.QRect(225, 260, 350, 40))
         font = QtGui.QFont()
         font.setPointSize(20)
-        self.lineEdit_2.setFont(font)
-        self.lineEdit_2.setObjectName("lineEdit_2")
+        self.passwordEdit.setFont(font)
+        self.passwordEdit.setObjectName("passwordEdit")
         self.label = QtWidgets.QLabel(self.centralwidget)
         self.label.setGeometry(QtCore.QRect(225, 140, 60, 30))
         font = QtGui.QFont()
@@ -53,13 +57,19 @@ class Ui_MainWindow(object):
         self.pushButton = QtWidgets.QPushButton(self.centralwidget)
         self.pushButton.setGeometry(QtCore.QRect(225, 360, 350, 40))
         self.pushButton.setObjectName("pushButton")
-        self.label_3 = QtWidgets.QLabel(self.centralwidget)
-        self.label_3.setGeometry(QtCore.QRect(422, 230, 155, 30))
+        self.forgotPasswordLabel = QtWidgets.QLabel(self.centralwidget)
+        self.forgotPasswordLabel.setGeometry(QtCore.QRect(422, 230, 155, 30))
         font = QtGui.QFont()
         font.setPointSize(16)
-        self.label_3.setFont(font)
-        self.label_3.setTextFormat(QtCore.Qt.RichText)
-        self.label_3.setObjectName("label_3")
+        self.forgotPasswordLabel.setFont(font)
+        self.forgotPasswordLabel.setTextFormat(QtCore.Qt.RichText)
+        self.forgotPasswordLabel.setObjectName("forgotPasswordLabel")
+        self.forgotPasswordLabel.setOpenExternalLinks(True)
+        self.incorrectData = QtWidgets.QLabel(self.centralwidget)
+        self.incorrectData.setGeometry(QtCore.QRect(295, 300, 250, 30))
+        self.incorrectData.setFont(font)
+        self.incorrectData.setObjectName("incorrectData")
+
         MainWindow.setCentralWidget(self.centralwidget)
 
         self.retranslateUi(MainWindow)
@@ -71,6 +81,6 @@ class Ui_MainWindow(object):
         self.label.setText(_translate("MainWindow", "Login"))
         self.label_2.setText(_translate("MainWindow", "Password"))
         self.pushButton.setText(_translate("MainWindow", "Sign in for WebForces"))
-        self.label_3.setText(_translate(
+        self.forgotPasswordLabel.setText(_translate(
             "MainWindow",
             "<a href=\"http://localhost:8000/accounts/password_reset/\">Forgot password?</a>"))
