@@ -7,33 +7,43 @@ from webforces.settings import MONGODB_PROPERTIES
 
 class MongoDBWorker(dbworker.DBWorker):
     client: pymongo.MongoClient = None
+    db_url: str = ''
+    db_name: str = ''
 
-    def __init__(self) -> None:
+    def __init__(self, validation=False) -> None:
+        if not validation:
+            self.db_url = MONGODB_PROPERTIES['production_url']
+            self.db_name = "webforces"
+        else:
+            self.db_url = MONGODB_PROPERTIES['validation_url']
+            self.db_name = "webforces_val"
         self.connect()
 
     def connect(self) -> int:
         if self.client is not None:
             logger.warning("Databate is already connected")
-        self.client = pymongo.MongoClient(MONGODB_PROPERTIES['production_url'])
-        self.db = self.client.webforces
+        self.client = pymongo.MongoClient(self.db_url)
+        self.db = getattr(self.client, self.db_name)
         try:
-            if "id" not in self.db.list_collection_names():
-                to_insert = [
-                    {"name": "users", "last_id": 0},
-                    {"name": "tasks", "last_id": 0}
-                ]
-                id_collection = self.db["id"]
-                id_collection.insert_many(to_insert)
-                logger.debug("ID collection was created")
+            self._populateIds()
         except Exception as e:
             logger.error(f"MongoDBWorker connection failed: {e}")
             return DBStatus.s_connection_error
         else:
-            logger.debug(f"MongoDBWorker is connected to {MONGODB_PROPERTIES['production_url']}")
+            logger.debug(f"MongoDBWorker is connected to {self.db_url}")
             return DBStatus.s_ok
 
     def disconnect(self) -> int:
         return DBStatus.s_ok
+
+    def _populateIds(self):
+        to_insert = [
+            {"name": "users", "last_id": 0},
+            {"name": "tasks", "last_id": 0}
+        ]
+        id_collection = self.db["id"]
+        id_collection.insert_many(to_insert)
+        logger.debug("ID collection was created")
 
     def dropAll(self) -> None:
         (self.db["id"]).drop()

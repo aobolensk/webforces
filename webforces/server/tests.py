@@ -5,16 +5,17 @@ from webforces.server.structs import DBStatus, User
 
 class CoreTest(TestCase):
     def setUp(self):
-        self.core = Core()
+        self.core = Core(validation=True)
 
     def test_core_is_proper_singletone(self):
-        core2 = Core()
+        core2 = Core(validation=True)
         self.assertIs(core2, self.core)
 
 
 class DBTest(TestCase):
     def setUp(self):
-        self.core = Core()
+        self.core = Core(validation=True)
+        self.core.db._populateIds()
 
     def tearDown(self):
         self.core.db.dropAll()
