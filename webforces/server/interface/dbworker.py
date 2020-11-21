@@ -19,5 +19,17 @@ class DBWorker(abc.ABC):
         pass
 
     @abc.abstractmethod
-    def addUser(self, user_d) -> str:
+    def addUser(self, user_d):
+        pass
+
+    @abc.abstractmethod
+    def getAlgByTitle(self, title) -> dict():
+        pass
+
+    @abc.abstractmethod
+    def getAlgByID(self, id) -> dict():
+        pass
+
+    @abc.abstractmethod
+    def addAlg(self, alg_d):
         pass

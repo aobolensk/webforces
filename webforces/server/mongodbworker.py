@@ -60,7 +60,7 @@ class MongoDBWorker(dbworker.DBWorker):
         logger.debug("User was found")
         return user_d
 
-    def addUser(self, user_d) -> str:
+    def addUser(self, user_d):
         try:
             users_collection = self.db["users"]
             if users_collection.find_one({"login": user_d["login"]}) is not None:
@@ -73,6 +73,45 @@ class MongoDBWorker(dbworker.DBWorker):
         logger.debug("New user was successfully added")
         return id
 
+    def getAlgByTitle(self, title) -> dict():
+        try:
+            algs_collection = self.db["algorithms"]
+            alg_d = algs_collection.find_one({"title": title})
+            if alg_d is None:
+                logger.error("This algorithm does not exist")
+                return 2
+        except Exception as e:
+            logger.error(f"MongoDBWorker connection failed: {e}")
+            return 1
+        logger.debug("Algorithm was found")
+        return alg_d
+
+    def getAlgByID(self, id) -> dict():
+        try:
+            algs_collection = self.db["algorithms"]
+            alg_d = algs_collection.find_one({"_id": id})
+            if alg_d is None:
+                logger.error("This algorithm does not exist")
+                return 2
+        except Exception as e:
+            logger.error(f"MongoDBWorker connection failed: {e}")
+            return 1
+        logger.debug("Algorithm was found")
+        return alg_d
+
+    def addAlg(self, alg_d):
+        try:
+            algs_collection = self.db["algorithms"]
+            if algs_collection.find_one({"title": alg_d["title"]}) is not None:
+                logger.error("This algorithm already exists")
+                return 2
+            id = algs_collection.insert_one(alg_d).inserted_id
+        except Exception as e:
+            logger.error(f"MongoDBWorker connection failed: {e}")
+            return 1
+        logger.debug("New algorithm was successfully added")
+        return id
+
 if __name__ == "__main__":
     MDB = MongoDBWorker()
     user = User("login1", "fn", "sn", "mn", [0])
@@ -80,5 +119,8 @@ if __name__ == "__main__":
     #MDB.addUser(user_d)
     user_d2 = MDB.getUserByLogin("login1")
     user_d3 = MDB.getUserByID(user_d2["_id"])
-    #algohol = Algorithm("title", user_d2["_id"], )
+    algohol = Algorithm("title", user_d2["_id"], "source", [0], 0).__dict__
+    alg_d1 = MDB.getAlgByTitle(algohol["title"])
+    alg_d2 = MDB.getAlgByID(alg_d1["_id"])
+    print(alg_d1 == alg_d2)
     
