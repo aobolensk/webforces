@@ -99,7 +99,8 @@ DATABASES = {
 }
 
 MONGODB_PROPERTIES = {
-    'production_url': 'mongodb://localhost:27017/webforces'
+    'production_url': 'mongodb://localhost:27017/webforces',
+    'validation_url': 'mongodb://localhost:27017/webforces_val',
 }
 
 # Password validation
