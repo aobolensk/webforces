@@ -1,3 +1,6 @@
+import sys
+sys.path.append('../')
+sys.path.append('../../')
 import pymongo
 from loguru import logger
 from webforces.server.interface import dbworker
@@ -32,3 +35,7 @@ class MongoDBWorker(dbworker.DBWorker):
 
     def disconnect(self) -> int:
         return 0
+
+
+if __name__ == "__main__":
+    MDB = MongoDBWorker()
