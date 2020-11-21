@@ -1,0 +1,4 @@
+<h2>API:</h2>
+{% for entry in index %}
+    <p><a href="{{ entry.real_url }}">{{ entry.show_url }}</a>: {{ entry.description }}</p>
+{% endfor %}
