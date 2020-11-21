@@ -2,11 +2,10 @@ import sys
 sys.path.append('../')
 sys.path.append('../../')
 import pymongo
-from structs import User
 from loguru import logger
+from webforces.server.structs import User, Algorithm
 from webforces.server.interface import dbworker
 from webforces.settings import MONGODB_PROPERTIES
-
 
 class MongoDBWorker(dbworker.DBWorker):
     client: pymongo.MongoClient = None
@@ -20,13 +19,11 @@ class MongoDBWorker(dbworker.DBWorker):
         self.client = pymongo.MongoClient(MONGODB_PROPERTIES['production_url'])
         self.db = self.client.webforces
         try:
-            # <PLACEHOLDER>
             if "stats" not in self.db.list_collection_names():
                 stats_collection = self.db["stats"]
                 stats_collection.insert_one({
                     "name": "webforces",
                 })
-            # </PLACEHOLDER>
         except Exception as e:
             logger.error(f"MongoDBWorker connection failed: {e}")
             return 1
@@ -39,13 +36,11 @@ class MongoDBWorker(dbworker.DBWorker):
 
     def getUserByID(self, id) -> dict():
         try:
-            # <PLACEHOLDER>
             users_collection = self.db["users"]
             user_d = users_collection.find_one({"_id": id})
             if user_d is None:
                 logger.error("This user is not exist")
                 return 2
-            # </PLACEHOLDER>
         except Exception as e:
             logger.error(f"MongoDBWorker connection failed: {e}")
             return 1
@@ -54,13 +49,11 @@ class MongoDBWorker(dbworker.DBWorker):
 
     def getUserByLogin(self, login) -> dict():
         try:
-            # <PLACEHOLDER>
             users_collection = self.db["users"]
             user_d = users_collection.find_one({"login": login})
             if user_d is None:
                 logger.error("This user is not exist")
                 return 2
-            # </PLACEHOLDER>
         except Exception as e:
             logger.error(f"MongoDBWorker connection failed: {e}")
             return 1
@@ -69,13 +62,11 @@ class MongoDBWorker(dbworker.DBWorker):
 
     def addUser(self, user_d) -> str:
         try:
-            # <PLACEHOLDER>
             users_collection = self.db["users"]
             if users_collection.find_one({"login": user_d["login"]}) is not None:
                 logger.error("This login is already taken")
                 return 2
             id = users_collection.insert_one(user_d).inserted_id
-            # </PLACEHOLDER>
         except Exception as e:
             logger.error(f"MongoDBWorker connection failed: {e}")
             return 1
@@ -84,10 +75,10 @@ class MongoDBWorker(dbworker.DBWorker):
 
 if __name__ == "__main__":
     MDB = MongoDBWorker()
-    user = User(1, "login1", "fn", "sn", "mn", [0])
+    user = User("login1", "fn", "sn", "mn", [0])
     user_d = user.__dict__
     #MDB.addUser(user_d)
     user_d2 = MDB.getUserByLogin("login1")
-    print(user_d2["_id"])
     user_d3 = MDB.getUserByID(user_d2["_id"])
-    print(user_d2 == user_d3)
+    #algohol = Algorithm("title", user_d2["_id"], )
+    
