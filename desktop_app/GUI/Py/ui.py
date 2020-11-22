@@ -2,27 +2,65 @@ from PyQt5 import QtWidgets
 
 import LoginWindow
 import MainWindow
+import SignupWindow
 
 
-def checkAuth(login, password):
-    return 1 if login == "Anton" and password == "Molodec" else 0
-
-
-class LoginWindow(QtWidgets.QMainWindow, LoginWindow.Ui_LoginWindow):
+class LoginWindow(QtWidgets.QMainWindow, LoginWindow.Ui_MainWindow):
     def __init__(self):
         super().__init__()
         self.setupUi(self)
         self.pushButton.clicked.connect(self.logBtn)
+        self.signupButton.clicked.connect(self.signUpBtn)
+
+    def resizeEvent(self, event):
+        self.authenticationField.move(self.centralwidget.width()/2 - self.authenticationField.width()/2,
+                                      self.centralwidget.height()/2 - self.authenticationField.height()/2)
 
     def logBtn(self):
         login = self.loginEdit.text()
         password = self.passwordEdit.text()
-        if checkAuth(login, password):
+        if self.checkAuth(login, password):
             self.mainWin = MainWindow()
             self.mainWin.show()
             self.close()
         else:
             self.incorrectData.setText("Invalid login or password")
+
+    def checkAuth(self, login, password):
+        return 1 if login == "Anton" and password == "Molodec" else 0
+
+    def signUpBtn(self):
+        self.signUpWin = SignupWindow()
+        self.signUpWin.show()
+        self.close()
+
+
+class SignupWindow(QtWidgets.QMainWindow, SignupWindow.Ui_MainWindow):
+    def __init__(self):
+        super().__init__()
+        self.setupUi(self)
+        self.pushButton.clicked.connect(self.SignUpBtn)
+
+    def resizeEvent(self, event):
+        self.authenticationField.move(self.centralwidget.width()/2 - self.authenticationField.width()/2,
+                                      self.centralwidget.height()/2 - self.authenticationField.height()/2)
+
+    def SignUpBtn(self):
+        username = self.usernameEdit.text()
+        password = self.passwordEdit.text()
+        password_confimation = self.passwordConfimationEdit.text()
+        if self.checkUsername(username) and self.checkPassword(password, password_confimation):
+            self.loginWin = LoginWindow()
+            self.loginWin.show()
+            self.close()
+        else:
+            self.errorMessage.setText("Invalid username or password")
+
+    def checkPassword(self, password, password_confimation):
+        return 1
+
+    def checkUsername(self, username):
+        return 1
 
 
 class MainWindow(QtWidgets.QMainWindow, MainWindow.Ui_MainWindow):
