@@ -1,0 +1,9 @@
+<header>
+    <h1>Main page</h1>
+    {% for entry in index %}
+        <form action="{{ entry.url }}">
+            <input type="submit" value="{{ entry.description }}" />
+        </form>
+    {% endfor %}
+</header>
+{% block content %}{% endblock %}
