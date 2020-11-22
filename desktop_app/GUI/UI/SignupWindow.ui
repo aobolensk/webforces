@@ -6,27 +6,21 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>848</width>
+    <width>846</width>
     <height>683</height>
    </rect>
   </property>
-  <property name="font">
-   <font>
-    <family>Calibri Light</family>
-    <pointsize>12</pointsize>
-   </font>
-  </property>
   <property name="windowTitle">
-   <string>WebForces client</string>
+   <string>MainWindow</string>
   </property>
   <widget class="QWidget" name="centralwidget">
    <widget class="QGroupBox" name="authenticationField">
     <property name="geometry">
      <rect>
-      <x>190</x>
-      <y>150</y>
-      <width>451</width>
-      <height>331</height>
+      <x>160</x>
+      <y>80</y>
+      <width>431</width>
+      <height>421</height>
      </rect>
     </property>
     <property name="sizePolicy">
@@ -46,7 +40,7 @@
       <rect>
        <x>40</x>
        <y>20</y>
-       <width>60</width>
+       <width>141</width>
        <height>30</height>
       </rect>
      </property>
@@ -59,13 +53,13 @@
       </font>
      </property>
      <property name="text">
-      <string>Login</string>
+      <string>Username</string>
      </property>
      <property name="textFormat">
       <enum>Qt::AutoText</enum>
      </property>
     </widget>
-    <widget class="QLineEdit" name="loginEdit">
+    <widget class="QLineEdit" name="usernameEdit">
      <property name="geometry">
       <rect>
        <x>40</x>
@@ -82,6 +76,7 @@
      </property>
      <property name="font">
       <font>
+       <family>Calibri Light</family>
        <pointsize>20</pointsize>
       </font>
      </property>
@@ -106,6 +101,7 @@
      </property>
      <property name="font">
       <font>
+       <family>Calibri Light</family>
        <pointsize>16</pointsize>
       </font>
      </property>
@@ -124,53 +120,71 @@
      </property>
      <property name="font">
       <font>
+       <family>Calibri Light</family>
        <pointsize>20</pointsize>
       </font>
-     </property>
-    </widget>
-    <widget class="QLabel" name="forgotPasswordLabel">
-     <property name="geometry">
-      <rect>
-       <x>200</x>
-       <y>120</y>
-       <width>191</width>
-       <height>30</height>
-      </rect>
-     </property>
-     <property name="font">
-      <font>
-       <pointsize>16</pointsize>
-      </font>
-     </property>
-     <property name="text">
-      <string>&lt;a href=&quot;http://localhost:8000/accounts/password_reset/&quot;&gt;Forgot password?&lt;/a&gt;</string>
-     </property>
-     <property name="textFormat">
-      <enum>Qt::RichText</enum>
-     </property>
-     <property name="openExternalLinks">
-      <bool>true</bool>
      </property>
     </widget>
     <widget class="QPushButton" name="pushButton">
      <property name="geometry">
       <rect>
        <x>40</x>
-       <y>250</y>
+       <y>350</y>
        <width>350</width>
        <height>40</height>
       </rect>
      </property>
+     <property name="font">
+      <font>
+       <family>Calibri Light</family>
+       <pointsize>12</pointsize>
+      </font>
+     </property>
      <property name="text">
-      <string>Sign in for WebForces</string>
+      <string>Sign up for WebForces</string>
      </property>
     </widget>
-    <widget class="QLabel" name="incorrectData">
+    <widget class="QLineEdit" name="passwordConfimationEdit">
      <property name="geometry">
       <rect>
-       <x>90</x>
-       <y>190</y>
-       <width>250</width>
+       <x>40</x>
+       <y>260</y>
+       <width>350</width>
+       <height>40</height>
+      </rect>
+     </property>
+     <property name="font">
+      <font>
+       <family>Calibri Light</family>
+       <pointsize>20</pointsize>
+      </font>
+     </property>
+    </widget>
+    <widget class="QLabel" name="label_3">
+     <property name="geometry">
+      <rect>
+       <x>40</x>
+       <y>220</y>
+       <width>351</width>
+       <height>30</height>
+      </rect>
+     </property>
+     <property name="font">
+      <font>
+       <family>Calibri Light</family>
+       <pointsize>16</pointsize>
+      </font>
+     </property>
+     <property name="text">
+      <string>Password confirmation</string>
+     </property>
+    </widget>
+    <widget class="QLabel" name="errorMessage">
+     <property name="geometry">
+      <rect>
+       <x>80</x>
+       <y>300</y>
+       <width>281</width>
        <height>30</height>
       </rect>
      </property>
@@ -183,26 +197,19 @@
       <string/>
      </property>
     </widget>
-    <widget class="QPushButton" name="signupButton">
-     <property name="geometry">
-      <rect>
-       <x>270</x>
-       <y>10</y>
-       <width>121</width>
-       <height>40</height>
-      </rect>
-     </property>
-     <property name="font">
-      <font>
-       <pointsize>14</pointsize>
-      </font>
-     </property>
-     <property name="text">
-      <string>Sign Up?</string>
-     </property>
-    </widget>
    </widget>
   </widget>
+  <widget class="QMenuBar" name="menubar">
+   <property name="geometry">
+    <rect>
+     <x>0</x>
+     <y>0</y>
+     <width>846</width>
+     <height>26</height>
+    </rect>
+   </property>
+  </widget>
+  <widget class="QStatusBar" name="statusbar"/>
  </widget>
  <resources/>
  <connections/>
