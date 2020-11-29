@@ -21,6 +21,7 @@ from . import views
 urlpatterns = [
     path('', views.MainPageView.as_view()),
     path('admin/', admin.site.urls),
+    path('accounts/login/', views.log_in, name='login'),
     path('accounts/', include('django.contrib.auth.urls')),
     path('accounts/sign_up/', views.sign_up),
     path('api/', include('webforces.api.urls')),

@@ -1,17 +1,20 @@
 import sys
 
 from loguru import logger
+from webforces.server.auth import Auth
 from webforces.server.interface.dbworker import DBWorker
 from webforces.server.mongodbworker import MongoDBWorker
 
 
 class Core:
     _instance = None
+    auth: Auth = None
     db: DBWorker = None
 
     def __init__(self) -> None:
         self._setup_logging()
         logger.debug("Core init")
+        self.auth = Auth()
         self.db = MongoDBWorker()
 
     def __new__(cls):
