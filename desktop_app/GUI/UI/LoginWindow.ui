@@ -127,6 +127,12 @@
        <pointsize>20</pointsize>
       </font>
      </property>
+     <property name="inputMethodHints">
+      <set>Qt::ImhHiddenText|Qt::ImhNoAutoUppercase|Qt::ImhNoPredictiveText|Qt::ImhSensitiveData</set>
+     </property>
+     <property name="echoMode">
+      <enum>QLineEdit::Password</enum>
+     </property>
     </widget>
     <widget class="QLabel" name="forgotPasswordLabel">
      <property name="geometry">
