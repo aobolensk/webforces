@@ -1,5 +1,6 @@
 from PyQt5 import QtWidgets
 
+from django.contrib.auth import login, authenticate
 import LoginWindow
 import MainWindow
 import SignupWindow
@@ -10,7 +11,6 @@ class LoginWindow(QtWidgets.QMainWindow, LoginWindow.Ui_MainWindow):
         super().__init__()
         self.setupUi(self)
         self.pushButton.clicked.connect(self.logBtn)
-        self.signupButton.clicked.connect(self.signUpBtn)
 
     def resizeEvent(self, event):
         self.authenticationField.move(self.centralwidget.width()/2 - self.authenticationField.width()/2,
@@ -27,7 +27,9 @@ class LoginWindow(QtWidgets.QMainWindow, LoginWindow.Ui_MainWindow):
             self.incorrectData.setText("Invalid login or password")
 
     def checkAuth(self, login, password):
-        return 1 if login == "Anton" and password == "Molodec" else 0
+        if authenticate(username=login, password=password):
+            return 1
+        return 0
 
     def signUpBtn(self):
         self.signUpWin = SignupWindow()
