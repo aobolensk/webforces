@@ -1,9 +1,27 @@
-<header>
-    <h1>Main page</h1>
-    {% for entry in index %}
-        <form action="{{ entry.url }}">
-            <input type="submit" value="{{ entry.description }}" />
-        </form>
-    {% endfor %}
-</header>
-{% block content %}{% endblock %}
+<html>
+    <head>
+    </head>
+    <body>
+        <div class="page_header">
+            <table width="100%">
+                <tr>
+                    <td align="left">
+                        <h1 class="site_name">Webforces</h1>
+                    </td>
+                    <td align="right">
+                        <div class="buttons">
+                            {% for entry in index %}
+                                <input type="button" onclick="location.href='{{ entry.url }}'" value="{{ entry.description }}" />
+                            {% endfor %}
+                        </div>
+                    </td>
+                </tr>
+            </table>
+            <hr>
+        </div>
+        <div class="content">
+            {% block content %}
+            {% endblock %}
+        </div>
+    </body>
+</html>

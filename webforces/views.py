@@ -5,23 +5,37 @@ from django.contrib.auth.forms import UserCreationForm
 from django.shortcuts import render, redirect
 from django.views.generic.base import TemplateView
 
+
 @dataclass
 class Href:
     url: str = ''
     description: str = ''
 
-class MainPageView(TemplateView):
-    template_name = "base.html"
 
-    _index = [
-        Href("/accounts/sign_in/", "sign in"),
-        Href("/accounts/sign_up/", "sign up"),
-    ]
+class MainPageView(TemplateView):
+    template_name = "main_page.html"
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context['index'] = self._index
+        context["auth"] = self.request.user.is_authenticated
+        context["index"] = self.get_indexes(self.request.user)
         return context
+
+    def get_indexes(self, user):
+        if user.is_superuser:
+            return [
+                Href("/api/", "api"),
+                Href("/accounts/logout/", "sign out"),
+            ]
+        elif user.is_authenticated:
+            return [
+                Href("/accounts/logout/", "sign out"),
+            ]
+        return [
+            Href("/accounts/login/", "sign in"),
+            Href("/accounts/sign_up/", "sign up"),
+        ]
+
 
 def sign_up(request):
     if request.method == 'POST':
