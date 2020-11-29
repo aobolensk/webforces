@@ -53,7 +53,7 @@ class Ui_MainWindow(object):
         self.loginEdit.setFont(font)
         self.loginEdit.setLayoutDirection(QtCore.Qt.LeftToRight)
         self.loginEdit.setText("")
-        self.loginEdit.setAlignment(QtCore.Qt.AlignLeading|QtCore.Qt.AlignLeft|QtCore.Qt.AlignVCenter)
+        self.loginEdit.setAlignment(QtCore.Qt.AlignLeading | QtCore.Qt.AlignLeft | QtCore.Qt.AlignVCenter)
         self.loginEdit.setObjectName("loginEdit")
         self.label_2 = QtWidgets.QLabel(self.authenticationField)
         self.label_2.setGeometry(QtCore.QRect(40, 120, 120, 30))
@@ -66,6 +66,10 @@ class Ui_MainWindow(object):
         font = QtGui.QFont()
         font.setPointSize(20)
         self.passwordEdit.setFont(font)
+        self.passwordEdit.setInputMethodHints(
+            QtCore.Qt.ImhHiddenText | QtCore.Qt.ImhNoAutoUppercase
+            | QtCore.Qt.ImhNoPredictiveText | QtCore.Qt.ImhSensitiveData)
+        self.passwordEdit.setEchoMode(QtWidgets.QLineEdit.Password)
         self.passwordEdit.setObjectName("passwordEdit")
         self.forgotPasswordLabel = QtWidgets.QLabel(self.authenticationField)
         self.forgotPasswordLabel.setGeometry(QtCore.QRect(200, 120, 191, 30))
@@ -103,6 +107,8 @@ class Ui_MainWindow(object):
         MainWindow.setWindowTitle(_translate("MainWindow", "WebForces client"))
         self.label.setText(_translate("MainWindow", "Login"))
         self.label_2.setText(_translate("MainWindow", "Password"))
-        self.forgotPasswordLabel.setText(_translate("MainWindow", "<a href=\"http://localhost:8000/accounts/password_reset/\">Forgot password?</a>"))
+        self.forgotPasswordLabel.setText(_translate(
+            "MainWindow", "<a href=\"http://localhost:8000/accounts/password_reset/\">Forgot password?</a>"))
         self.pushButton.setText(_translate("MainWindow", "Sign in for WebForces"))
-        self.signUpLabel.setText(_translate("MainWindow", "<a href=\"http://localhost:8000/accounts/sign_up/\">Sign up</a>"))
+        self.signUpLabel.setText(_translate(
+            "MainWindow", "<a href=\"http://localhost:8000/accounts/sign_up/\">Sign up</a>"))
