@@ -1,6 +1,9 @@
-class Auth:
-    def authenticate(login: str, password: str) -> bool:
-        pass
+from loguru import logger
 
-    def register(login: str, password: str) -> bool:
-        pass
+
+class Auth:
+    def authenticate(self, login: str, password: str) -> bool:
+        logger.debug(f"Logging in user: '{login}', password: {password}'")
+
+    def register(self, login: str, password: str) -> bool:
+        logger.debug(f"Signing up user: '{login}', password: {password}'")

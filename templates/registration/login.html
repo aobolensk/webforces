@@ -16,6 +16,9 @@
       <td>{{ form.password }}</td>
     </tr>
   </table>
+  {% for message in messages %}
+    <p style="color: red">{{ message }}</p>
+  {% endfor %}
   <input type="submit" value="login" />
   <input type="hidden" name="next" value="{{ next }}" />
 </form>
