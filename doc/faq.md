@@ -9,6 +9,11 @@ python manage.py createsuperuser
 ```bash
 python manage.py test
 ```
+Alternative (using pytest):
+```bash
+pytest
+pytest --html=report.html
+```
 
 ## How to use API?
 See [API FAQ](./api_faq.md)
