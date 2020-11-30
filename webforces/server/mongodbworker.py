@@ -1,3 +1,5 @@
+from typing import Tuple
+
 import pymongo
 from loguru import logger
 from webforces.server.structs import DBStatus, User
@@ -82,7 +84,7 @@ class MongoDBWorker(dbworker.DBWorker):
             return DBStatus.s_data_issue
         return DBStatus.s_ok
 
-    def addUser(self, user) -> (DBStatus, User):
+    def addUser(self, user) -> Tuple[DBStatus, User]:
         try:
             users_collection = self.db["users"]
             if users_collection.find_one({"login": user.login}) is not None:
@@ -100,7 +102,7 @@ class MongoDBWorker(dbworker.DBWorker):
         logger.debug("New user was successfully added")
         return (DBStatus.s_ok, user)
 
-    def getUserByID(self, user_id) -> (DBStatus, User):
+    def getUserByID(self, user_id) -> Tuple[DBStatus, User]:
         try:
             users_collection = self.db["users"]
             user_d = users_collection.find_one({"user_id": user_id})
@@ -113,7 +115,7 @@ class MongoDBWorker(dbworker.DBWorker):
         logger.debug("User was found")
         return (DBStatus.s_ok, User.fromDict(user_d))
 
-    def getUserByLogin(self, login) -> (DBStatus, User):
+    def getUserByLogin(self, login) -> Tuple[DBStatus, User]:
         try:
             users_collection = self.db["users"]
             user_d = users_collection.find_one({"login": login})
