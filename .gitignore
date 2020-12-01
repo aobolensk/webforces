@@ -10,3 +10,7 @@ db.sqlite3
 
 # Secrets
 secret.json
+
+# Report
+report.html
+assets/style.css
