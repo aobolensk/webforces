@@ -1,6 +1,6 @@
 from dataclasses import dataclass
 
-from django.views.generic.base import TemplateView
+from webforces.views import MainPageView
 
 
 @dataclass
@@ -10,7 +10,7 @@ class Endpoint:
     description: str = ''
 
 
-class APIIndexView(TemplateView):
+class APIIndexView(MainPageView):
     template_name = "api_index.html"
 
     _index = [
@@ -20,5 +20,5 @@ class APIIndexView(TemplateView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context['index'] = self._index
+        context['api_index'] = self._index
         return context
