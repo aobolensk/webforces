@@ -1,4 +1,8 @@
+{% extends 'base.html' %}
+
+{% block content %}
 <h2>API:</h2>
-{% for entry in index %}
+{% for entry in api_index %}
     <p><a href="{{ entry.real_url }}">{{ entry.show_url }}</a>: {{ entry.description }}</p>
 {% endfor %}
+{% endblock %}

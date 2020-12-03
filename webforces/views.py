@@ -21,7 +21,7 @@ class MainPageView(TemplateView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context["index"] = self.get_indexes(self.request.user)
+        context["base_index"] = self.get_indexes(self.request.user)
         return context
 
     def get_indexes(self, user):
