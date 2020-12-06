@@ -20,24 +20,35 @@ class MainPageView(TemplateView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context["auth"] = self.request.user.is_authenticated
         context["index"] = self.get_indexes(self.request.user)
         return context
 
     def get_indexes(self, user):
         if user.is_superuser:
             return [
+                Href("/users/"+user.username+"/", "profile"),
                 Href("/api/", "api"),
                 Href("/accounts/logout/", "sign out"),
             ]
         elif user.is_authenticated:
             return [
+                Href("/users/"+user.username+"/", "profile"),
                 Href("/accounts/logout/", "sign out"),
             ]
         return [
             Href("/accounts/login/", "sign in"),
             Href("/accounts/sign_up/", "sign up"),
         ]
+
+
+class UserView(MainPageView):
+    template_name = "user.html"
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["username"] = self.kwargs['user']
+        context["auth"] = self.request.user.is_authenticated
+        return context
 
 
 def sign_up(request):
