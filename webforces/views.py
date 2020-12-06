@@ -7,6 +7,7 @@ from django.shortcuts import redirect, render
 from django.views.generic.base import TemplateView
 
 from webforces.server.core import Core
+from webforces.server.structs import DBStatus
 
 
 @dataclass
@@ -48,6 +49,12 @@ class UserView(MainPageView):
         context = super().get_context_data(**kwargs)
         context["username"] = self.kwargs['user']
         context["auth"] = self.request.user.is_authenticated
+        core = Core()
+        status, user = core.db.getUserByLogin(self.kwargs['user'])
+        if status != DBStatus.s_ok:
+            context["fullname"] = ""
+        else:
+            context["fullname"] = f"{user.first_name} {user.middle_name} {user.second_name}"
         return context
 
 
