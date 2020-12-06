@@ -25,4 +25,5 @@ urlpatterns = [
     path('accounts/', include('django.contrib.auth.urls')),
     path('accounts/sign_up/', views.sign_up),
     path('api/', include('webforces.api.urls')),
+    path('users/<str:user>/', views.UserView.as_view()),
 ]
