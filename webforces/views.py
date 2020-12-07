@@ -3,6 +3,7 @@ from dataclasses import dataclass
 from django.contrib import messages
 from django.contrib.auth import authenticate, login
 from django.contrib.auth.forms import AuthenticationForm, UserCreationForm
+from django.core.exceptions import PermissionDenied
 from django.shortcuts import redirect, render
 from django.views.generic.base import TemplateView
 
@@ -28,6 +29,7 @@ class MainPageView(TemplateView):
         if user.is_superuser:
             return [
                 Href("/users/"+user.username+"/", "profile"),
+                Href("/stats/", "stats"),
                 Href("/api/", "api"),
                 Href("/accounts/logout/", "sign out"),
             ]
@@ -55,6 +57,20 @@ class UserView(MainPageView):
             context["fullname"] = ""
         else:
             context["fullname"] = f"{user.first_name} {user.middle_name} {user.second_name}"
+        return context
+
+
+class StatsView(MainPageView):
+    template_name = "stats.html"
+
+    def get_context_data(self, **kwargs):
+        if not self.request.user.is_superuser:
+            raise PermissionDenied
+        context = super().get_context_data(**kwargs)
+        stats = {
+            "name": "webforces",
+        }
+        context["stats"] = stats
         return context
 
 

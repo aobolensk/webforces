@@ -1,0 +1,8 @@
+{% extends 'base.html' %}
+
+{% block content %}
+    <h1>Stats:</h1>
+    {% for key, value in stats.items %}
+        <p>{{ key }}: {{ value }}</p>
+    {% endfor %}
+{% endblock %}
