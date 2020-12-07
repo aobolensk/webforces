@@ -1,4 +1,6 @@
+import djoser.urls.authtoken
 from django.http.response import Http404
+from loguru import logger
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.views import APIView
@@ -47,3 +49,11 @@ class UserView(APIView):
         }
 
         return Response(data)
+
+
+class GetTokenView(djoser.urls.authtoken.views.TokenCreateView):
+    def _action(self, serializer):
+        logger.debug(self.request.data)
+        if 'username' in self.request.data.keys() and 'password' in self.request.data.keys():
+            Core().auth.authenticate(self.request.data['username'], self.request.data['password'])
+        return super()._action(serializer)
