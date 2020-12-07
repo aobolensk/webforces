@@ -19,20 +19,27 @@ class LoginWindow(QtWidgets.QMainWindow, LoginWindow.Ui_MainWindow):
     def logBtn(self):
         login = self.loginEdit.text()
         password = self.passwordEdit.text()
-        if self.checkAuth(login, password):
+        status = self.checkAuth(login, password)
+        if status == 1:
             self.mainWin = MainWindow(self.token)
             self.mainWin.show()
             self.close()
-        else:
+        elif status == 0:
             self.incorrectData.setText("Invalid login or password")
+        else:
+            self.incorrectData.setText("Cannot connect to server")
 
     def checkAuth(self, login, password):
-        response = requests.post('http://127.0.0.1:8000/api/get_token/',
-                                 data={'username': login, 'password': password})
-        if response.status_code != 200:
-            return 0
-        self.token = response.json()['auth_token']
-        return 1
+        try:
+            response = requests.post('http://127.0.0.1:8000/api/get_token/',
+                                     data={'username': login, 'password': password})
+
+            if response.status_code != 200:
+                return 0
+            self.token = response.json()['auth_token']
+            return 1
+        except Exception:
+            return 2
 
     def signUpBtn(self):
         self.signUpWin = SignupWindow()
@@ -87,6 +94,7 @@ class MainWindow(QtWidgets.QMainWindow, MainWindow.Ui_MainWindow):
     def statisticBtn(self):
         response = requests.get('http://127.0.0.1:8000/api/stats/', headers={'Authorization': 'Token ' + self.token})
         if response.status_code == 200:
+            self.results.setText("")
             statistics = response.json()
             for key, value in statistics.items():
                 self.results.setText(self.results.text() + key + " : " + value + '\n')
