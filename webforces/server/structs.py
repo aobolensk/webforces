@@ -36,6 +36,14 @@ class Algorithm:
     tests_id: List[int] = field(default_factory=list)
     lang_id: int = 0
 
+    @classmethod
+    def fromDict(cls, dict):
+        return cls(
+            dict["alg_id"], dict["title"],
+            dict["author_id"], dict["source"], dict["tests_id"],
+            dict["lang_id"]
+        )
+
 
 @dataclass
 class Test:

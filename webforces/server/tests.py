@@ -15,7 +15,6 @@ class CoreTest(TestCase):
 class DBTest(TestCase):
     def setUp(self):
         self.core = Core(validation=True)
-        self.core.db._populateIds()
 
     def tearDown(self):
         self.core.db.dropAll()

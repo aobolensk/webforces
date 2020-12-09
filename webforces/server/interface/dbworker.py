@@ -1,5 +1,7 @@
+from typing import Tuple, List
+
 import abc
-from webforces.server.structs import User
+from webforces.server.structs import User, Algorithm
 from webforces.server.structs import DBStatus
 
 
@@ -17,32 +19,40 @@ class DBWorker(abc.ABC):
         pass
 
     @abc.abstractmethod
-    def addUser(self, user) -> (DBStatus, User):
+    def addUser(self, user) -> Tuple[DBStatus, User]:
         pass
 
     @abc.abstractmethod
-    def getUserByID(self, id) -> (DBStatus, User):
+    def getUserByID(self, id) -> Tuple[DBStatus, User]:
         pass
 
     @abc.abstractmethod
-    def getUserByLogin(self, login) -> (DBStatus, User):
+    def getUserByLogin(self, login) -> Tuple[DBStatus, User]:
+        pass
+
+    @abc.abstractmethod
+    def addAlg(self, alg, user_id) -> Tuple[DBStatus, Algorithm]:
+        pass
+
+    @abc.abstractmethod
+    def getAlgByTitle(self, title) -> Tuple[DBStatus, Algorithm]:
+        pass
+
+    @abc.abstractmethod
+    def getAuthorAlgByAlgID(self, author_id, alg_id) -> Tuple[DBStatus, Algorithm]:
+        pass
+
+    @abc.abstractmethod
+    def getAllAuthorAlgs(self, author_id) -> Tuple[DBStatus, List[Algorithm]]:
         pass
 
 # TODO
     @abc.abstractmethod
-    def getAlgByTitle(self, title) -> dict():
+    def bindAlg(self, alg, user_id) -> DBStatus:
         pass
 
     @abc.abstractmethod
     def getAlgByID(self, id) -> dict():
-        pass
-
-    @abc.abstractmethod
-    def addAlg(self, alg_d):
-        pass
-
-    @abc.abstractmethod
-    def bindAlgToUser(self, user_id, alg_id) -> int:
         pass
 
     @abc.abstractmethod
