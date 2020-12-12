@@ -2,7 +2,7 @@ from typing import Tuple, List
 
 import pymongo
 from loguru import logger
-from webforces.server.structs import DBStatus, User, Algorithm
+from webforces.server.structs import DBStatus, User, Algorithm, Test
 from webforces.server.interface import dbworker
 from webforces.settings import MONGODB_PROPERTIES
 
@@ -50,19 +50,21 @@ class MongoDBWorker(dbworker.DBWorker):
     def dropAll(self) -> None:
         (self.db["id"]).drop()
         (self.db["users"]).drop()
-        (self.db["algorithms"]).drop()
+        (self.db["algs"]).drop()
         (self.db["tests"]).drop()
         (self.db["tasks"]).drop()
         logger.debug("Collections were dropped")
 
-    # "users"       - get the last user ID + 1
-    # "tasks"       - get the last task ID + 1
-    # user_id + "u" - get ID of the last binded alg for this user + 1
-    # alg_id + "a"  - get ID of the last added test for this alg + 1
+    # "users"                      - get the last user ID + 1
+    # "tasks"                      - get the last task ID + 1
+    # user_id + "u"                - get ID of the last binded alg for this user + 1
+    # user_id + "u" + alg_id + "a" - get ID of the last added test for this alg + 1
     def _getNextID(self, name) -> int:
         try:
             id_collection = self.db["id"]
             dict = id_collection.find_one({"name": name})
+            if dict is None:
+                return DBStatus.s_data_issue
             new_id = int(dict["last_id"]) + 1
             id_collection.update_one(
                 {"name": name},
@@ -129,10 +131,10 @@ class MongoDBWorker(dbworker.DBWorker):
         logger.debug("User was found")
         return (DBStatus.s_ok, User.fromDict(user_d))
 
-    def addAlg(self, alg, user_id) -> Tuple[DBStatus, Algorithm]:
+    def addAlg(self, alg) -> Tuple[DBStatus, Algorithm]:
         try:
             # check user
-            st, user = (self.getUserByID(user_id))
+            st, user = self.getUserByID(alg.author_id)
             if st == DBStatus.s_data_issue:
                 logger.error("This user does not exist")
                 return (DBStatus.s_data_issue, Algorithm(-100))
@@ -143,28 +145,29 @@ class MongoDBWorker(dbworker.DBWorker):
                 return (DBStatus.s_data_issue, Algorithm(-100))
             # add alg
             algs_collection = self.db["algs"]
-            alg.alg_id = self._getNextID(str(user_id) + "u")
+            alg.alg_id = self._getNextID(str(user.user_id) + "u")
             if alg.alg_id == DBStatus.s_data_issue:
                 logger.error("This user does not exist")
                 return (DBStatus.s_data_issue, Algorithm(-100))
-            if self._insertOneID(str(alg.alg_id) + "a") == DBStatus.s_data_issue:
+            if self._insertOneID(str(alg.author_id) + "u" + str(alg.alg_id) + "a") == DBStatus.s_data_issue:
                 return (DBStatus.s_connection_error, Algorithm(-100))
             algs_collection.insert_one(alg.__dict__)
             # update author's list of algs
-            new_list_algs = (user.algs_id).append(alg.alg_id)
+            new_list_algs = user.algs_id
+            new_list_algs.append(alg.alg_id)
             users_collection = self.db["users"]
             users_collection.update_one(
-                {"_id": user_id},
+                {"user_id": user.user_id},
                 {"$set": {"algs_id": new_list_algs}})
         except Exception as e:
             logger.error(f"MongoDBWorker connection failed: {e}")
             return (DBStatus.s_connection_error, Algorithm(-100))
         logger.debug("New algorithm was successfully added")
-        return (DBStatus.s_ok, user)
+        return (DBStatus.s_ok, alg)
 
     def getAlgByTitle(self, title) -> Tuple[DBStatus, Algorithm]:
         try:
-            algs_collection = self.db["algorithms"]
+            algs_collection = self.db["algs"]
             alg_d = algs_collection.find_one({"title": title})
             if alg_d is None:
                 logger.error("This algorithm does not exist")
@@ -183,8 +186,8 @@ class MongoDBWorker(dbworker.DBWorker):
                 logger.error("This user does not exist")
                 return (DBStatus.s_data_issue, Algorithm(-100))
             # get alg
-            algs_collection = self.db["algorithms"]
-            alg_d = algs_collection.find_one({"alg_id": alg_id}, {"author_id": author_id})
+            algs_collection = self.db["algs"]
+            alg_d = algs_collection.find_one({"alg_id": alg_id, "author_id": author_id})
             if alg_d is None:
                 logger.error("This algorithm does not exist")
                 return (DBStatus.s_data_issue, Algorithm(-100))
@@ -202,10 +205,10 @@ class MongoDBWorker(dbworker.DBWorker):
                 logger.error("This user does not exist")
                 return (DBStatus.s_data_issue, [Algorithm(-100)])
             # get algs
-            algs_collection = self.db["algorithms"]
-            algs = List[Algorithm]
+            algs_collection = self.db["algs"]
+            algs = []
             for alg_id in author.algs_id:
-                alg_d = algs_collection.find_one({"alg_id": alg_id}, {"author_id": author_id})
+                alg_d = algs_collection.find_one({"alg_id": alg_id, "author_id": author_id})
                 algs.append(Algorithm.fromDict(alg_d))
         except Exception as e:
             logger.error(f"MongoDBWorker connection failed: {e}")
@@ -235,7 +238,7 @@ class MongoDBWorker(dbworker.DBWorker):
 
     def getAlgByID(self, id) -> dict():
         try:
-            algs_collection = self.db["algorithms"]
+            algs_collection = self.db["algs"]
             alg_d = algs_collection.find_one({"_id": id})
             if alg_d is None:
                 logger.error("This algorithm does not exist")
