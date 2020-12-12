@@ -46,7 +46,15 @@ class DBWorker(abc.ABC):
         pass
 
     @abc.abstractmethod
-    def addTest(self, alg, test) -> Tuple[DBStatus, Test]:
+    def addTest(self, test) -> Tuple[DBStatus, Test]:
+        pass
+
+    @abc.abstractmethod
+    def getTest(self, author_id, alg_id, test_id) -> Tuple[DBStatus, Test]:
+        pass
+
+    @abc.abstractmethod
+    def getAllAlgTests(self, author_id, alg_id) -> Tuple[DBStatus, List[Test]]:
         pass
 
 # TODO

@@ -48,9 +48,16 @@ class Algorithm:
 @dataclass
 class Test:
     test_id: int
+    alg_title: str = ''
     title: str = ''
     source: str = ''
 
+    @classmethod
+    def fromDict(cls, dict):
+        return cls(
+            dict["test_id"], dict["alg_title"],
+            dict["title"], dict["source"]
+        )
 
 @dataclass
 class Task:

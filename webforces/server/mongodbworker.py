@@ -216,6 +216,86 @@ class MongoDBWorker(dbworker.DBWorker):
         logger.debug("Algorithms was found")
         return (DBStatus.s_ok, algs)
 
+    def addTest(self, test) -> Tuple[DBStatus, Test]:
+        try:
+            # check alg
+            st, alg = self.getAlgByTitle(test.alg_title)
+            if st == DBStatus.s_data_issue:
+                logger.error("This algorithm does not exist")
+                return (DBStatus.s_data_issue, Test(-100))
+            # check user
+            st, user = self.getUserByID(alg.author_id)
+            if st == DBStatus.s_data_issue:
+                logger.error("This user does not exist")
+                return (DBStatus.s_data_issue, Test(-100))
+            # check title
+            #st, alg_check = self.getAlgByTitle(alg.title)
+            #if st != DBStatus.s_data_issue:
+            #    logger.error("This algorithm already exists")
+            #    return (DBStatus.s_data_issue, Algorithm(-100))
+            # add test
+            tests_collection = self.db["tests"]
+            test.test_id = self._getNextID(str(user.user_id) + "u" + str(alg.alg_id) + "a")
+            if test.test_id == DBStatus.s_data_issue:
+                logger.error("This user/algorithm does not exist")
+                return (DBStatus.s_data_issue, Test(-100))
+            tests_collection.insert_one(test.__dict__)
+            # update alg's list of algs
+            new_list_tests = alg.tests_id
+            new_list_tests.append(test.test_id)
+            algs_collection = self.db["algs"]
+            algs_collection.update_one(
+                {"title": alg.title},
+                {"$set": {"tests_id": new_list_tests}})
+        except Exception as e:
+            logger.error(f"MongoDBWorker connection failed: {e}")
+            return (DBStatus.s_connection_error, Test(-100))
+        logger.debug("New test was successfully added")
+        return (DBStatus.s_ok, test)
+
+    def getTest(self, author_id, alg_id, test_id) -> Tuple[DBStatus, Test]:
+        try:
+            # check alg
+            st, alg = self.getAuthorAlgByAlgID(author_id, alg_id)
+            if st == DBStatus.s_data_issue:
+                logger.error("This algorithm does not exist")
+                return (DBStatus.s_data_issue, Test(-100))
+            # get test
+            tests_collection = self.db["tests"]
+            test_d = tests_collection.find_one({"test_id": test_id, "alg_title": alg.title})
+            if test_d is None:
+                logger.error("This test does not exist")
+                return (DBStatus.s_data_issue, Test(-100))
+        except Exception as e:
+            logger.error(f"MongoDBWorker connection failed: {e}")
+            return (DBStatus.s_connection_error, Test(-100))
+        logger.debug("Test was found")
+        return (DBStatus.s_ok, Algorithm.fromDict(test_d))
+
+    def getAllAlgTests(self, author_id, alg_id) -> Tuple[DBStatus, List[Test]]:
+        try:
+            # check alg
+            st, alg = self.getAuthorAlgByAlgID(author_id, alg_id)
+            if st == DBStatus.s_data_issue:
+                logger.error("This algorithm does not exist")
+                return (DBStatus.s_data_issue, [Test(-100)])
+            # check user
+            st = (self.getUserByID(author_id))[0]
+            if st == DBStatus.s_data_issue:
+                logger.error("This user does not exist")
+                return (DBStatus.s_data_issue, [Test(-100)])
+            # get tests
+            tests_collection = self.db["tests"]
+            tests = []
+            for test_id in alg.tests_id:
+                test_d = tests_collection.find_one({"test_id": test_id, "alg_title": alg.title})
+                tests.append(Algorithm.fromDict(test_d))
+        except Exception as e:
+            logger.error(f"MongoDBWorker connection failed: {e}")
+            return (DBStatus.s_connection_error, [Test(-100)])
+        logger.debug("Tests was found")
+        return (DBStatus.s_ok, tests)
+
 # TODO
     def bindAlg(self, alg_id, user_id) -> DBStatus:
         try:
