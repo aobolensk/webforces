@@ -103,6 +103,28 @@ class MongoDBWorker(dbworker.DBWorker):
         logger.debug("New user was successfully added")
         return (DBStatus.s_ok, user)
 
+    def updUser(self, user) -> DBStatus:
+        try:
+            users_collection = self.db["users"]
+            user_d = users_collection.find_one({"user_id": user.user_id})
+            if user_d is None:
+                logger.error("This user does not exist")
+                return DBStatus.s_data_issue
+            user_d = users_collection.update_one(
+                {"user_id": user.user_id}, {"$set": {
+                    "first_name": user.first_name,
+                    "second_name": user.second_name,
+                    "middle_name": user.middle_name,
+                }})
+            if user_d is None:
+                logger.error("User update failed")
+                return DBStatus.s_data_issue
+        except Exception as e:
+            logger.error(f"MongoDBWorker connection failed: {e}")
+            return DBStatus.s_connection_error
+        logger.debug("User was updated")
+        return DBStatus.s_ok
+
     def getUserByID(self, user_id) -> Tuple[DBStatus, User]:
         try:
             users_collection = self.db["users"]

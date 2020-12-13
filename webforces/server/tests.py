@@ -559,3 +559,25 @@ class DBTest(TestCase):
         self.assertEqual(stats.num_of_algs, 3)
         self.assertEqual(stats.num_of_tests, 4)
         self.assertEqual(stats.num_of_tasks, 3)
+
+    def test_can_update_user(self):
+        user1 = User(0, "LOGIN_USER1", "FN_USER1", "SN_USER1", "MN_USER1", [])
+        _, user1 = self.core.db.addUser(user1)
+        self.assertEqual(user1.first_name, "FN_USER1")
+        self.assertEqual(user1.second_name, "SN_USER1")
+        self.assertEqual(user1.middle_name, "MN_USER1")
+        user1.first_name = "FN_USER2"
+        user1.second_name = "SN_USER2"
+        user1.middle_name = "MN_USER2"
+        status = self.core.db.updUser(user1)
+        self.assertEqual(status, DBStatus.s_ok)
+        status, user2 = self.core.db.getUserByID(user1.user_id)
+        self.assertEqual(status, DBStatus.s_ok)
+        self.assertEqual(user2.first_name, "FN_USER2")
+        self.assertEqual(user2.second_name, "SN_USER2")
+        self.assertEqual(user2.middle_name, "MN_USER2")
+
+    def test_cant_update_nonexisting_user(self):
+        user1 = User(0, "LOGIN_USER1", "FN_USER1", "SN_USER1", "MN_USER1", [])
+        status = self.core.db.updUser(user1)
+        self.assertEqual(status, DBStatus.s_data_issue)
