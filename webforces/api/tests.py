@@ -75,6 +75,49 @@ class RestApiSuperUserTest(TestCase):
         self.assertEqual(stats["second_name"], "SN_USER1")
         self.assertEqual(stats["middle_name"], "MN_USER1")
 
+    def testPostUserUpdate(self):
+        user = User(0, "LOGIN_USER1", "FN_USER1", "SN_USER1", "MN_USER1", [])
+        self.core.db.addUser(user)
+        header = {
+            "Authorization": (
+                "Token: " + self.client.post('/api/get_token/', {
+                    "username": self.username,
+                    "password": self.password
+                }).json()["auth_token"])
+        }
+        response = self.client.post('/api/users/1/', {
+            "user_id": 1,
+            "login": "LOGIN_USER1",
+            "first_name": "FN_USER2",
+            "second_name": "SN_USER2",
+            "middle_name": "MN_USER2",
+        }, **header)
+        self.assertEqual(response.status_code, 200)
+        response = self.client.get('/api/users/1/')
+        stats = response.json()
+        self.assertEqual(stats["id"], 1)
+        self.assertEqual(stats["login"], "LOGIN_USER1")
+        self.assertEqual(stats["first_name"], "FN_USER2")
+        self.assertEqual(stats["second_name"], "SN_USER2")
+        self.assertEqual(stats["middle_name"], "MN_USER2")
+
+    def testPostUserUpdateNonExistingUser(self):
+        header = {
+            "Authorization": (
+                "Token: " + self.client.post('/api/get_token/', {
+                    "username": self.username,
+                    "password": self.password
+                }).json()["auth_token"])
+        }
+        response = self.client.post('/api/users/1/', {
+            "user_id": 2,
+            "login": "LOGIN_USER1",
+            "first_name": "FN_USER2",
+            "second_name": "SN_USER2",
+            "middle_name": "MN_USER2",
+        }, **header)
+        self.assertEqual(response.status_code, 500)
+
 
 class RestApiRegularUserTest(RestApiSuperUserTest):
     """Test REST API with user permission level"""
@@ -139,3 +182,13 @@ class RestApiGuestTest(RestApiRegularUserTest):
         status, user = self.core.db.addUser(User(0, "LOGIN_USER1", "FN_USER1", "SN_USER1", "MN_USER1", []))
         response = self.client.get('/api/users/LOGIN_USER1/')
         self.assertEqual(response.status_code, 403)
+
+    def testPostUserUpdate(self):
+        user = User(0, "LOGIN_USER1", "FN_USER1", "SN_USER1", "MN_USER1", [])
+        self.core.db.addUser(user)
+        response = self.client.post('/api/get_token/').json()
+        self.assertFalse("auth_token" in response)
+
+    def testPostUserUpdateNonExistingUser(self):
+        response = self.client.post('/api/get_token/').json()
+        self.assertFalse("auth_token" in response)

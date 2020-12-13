@@ -5,7 +5,7 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from webforces.server.core import Core
-from webforces.server.structs import DBStatus
+from webforces.server.structs import DBStatus, User
 
 
 class StatsView(APIView):
@@ -53,6 +53,17 @@ class UserViewID(APIView):
         }
 
         return Response(data)
+
+    def post(self, request, pk):
+        core = Core()
+        user = request.data.dict()
+        user["user_id"] = int(user["user_id"])
+        user["algs_id"] = []
+        user = User.fromDict(user)
+        status = core.db.updUser(user)
+        if status != DBStatus.s_ok:
+            return Response({"error": f"Could not update user: {status}"}, status=500)
+        return Response({})
 
 
 class UserViewLogin(APIView):
