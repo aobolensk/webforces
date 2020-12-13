@@ -3,6 +3,9 @@ from typing import List
 from enum import Enum
 
 
+ERROR_ID = -100
+
+
 class DBStatus(Enum):
     s_ok = 0
     s_connection_error = -1

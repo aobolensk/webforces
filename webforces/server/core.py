@@ -24,7 +24,7 @@ class Core:
         logger.debug("Core init")
         self.auth = Auth()
         self.db = MongoDBWorker(validation)
-        #self._is_done = True
+        self._is_done = True
 
     def __new__(cls, *args, **kwargs):
         if cls._instance is None:

@@ -1,6 +1,6 @@
 from django.test import TestCase
 from webforces.server.core import Core
-from webforces.server.structs import DBStatus, User, Algorithm, Test, Task, Stats
+from webforces.server.structs import DBStatus, ERROR_ID, User, Algorithm, Test, Task, Stats
 
 
 class CoreTest(TestCase):
@@ -15,6 +15,7 @@ class CoreTest(TestCase):
 class DBTest(TestCase):
     def setUp(self):
         self.core = Core(validation=True)
+        self.core.db._populateIds()
 
     def tearDown(self):
         self.core.db.dropAll()
@@ -39,7 +40,7 @@ class DBTest(TestCase):
         self.assertEqual(status1, DBStatus.s_ok)
         self.assertEqual(status2, DBStatus.s_data_issue)
         self.assertEqual(user1.user_id, 1)
-        self.assertEqual(user2.user_id, -100)
+        self.assertEqual(user2.user_id, ERROR_ID)
         self.assertEqual(self.core.db._getNextID("1u"), 1)
         self.assertEqual(self.core.db._getNextID("2u"), DBStatus.s_data_issue)
 
@@ -55,7 +56,7 @@ class DBTest(TestCase):
         user1 = (self.core.db.addUser(user1))[1]
         status, user2 = self.core.db.getUserByID(user1.user_id + len("typo"))
         self.assertEqual(status, DBStatus.s_data_issue)
-        self.assertEqual(user2.user_id, -100)
+        self.assertEqual(user2.user_id, ERROR_ID)
 
     def test_can_get_user_by_correct_login(self):
         user1 = User(0, "LOGIN_USER1", "FN_USER1", "SN_USER1", "MN_USER1", [])
@@ -69,7 +70,7 @@ class DBTest(TestCase):
         user1 = (self.core.db.addUser(user1))[1]
         status, user2 = self.core.db.getUserByLogin(user1.login + "typo")
         self.assertEqual(status, DBStatus.s_data_issue)
-        self.assertEqual(user2.user_id, -100)
+        self.assertEqual(user2.user_id, ERROR_ID)
 
     def test_can_get_all_users(self):
         user1 = User(0, "LOGIN_USER1", "FN_USER1", "SN_USER1", "MN_USER1", [])
@@ -110,7 +111,7 @@ class DBTest(TestCase):
         alg = Algorithm(0, "TITLE_ALG", user.user_id + len("typo"), "SOURCE_ALG", [], 0)
         status, alg = self.core.db.addAlg(alg)
         self.assertEqual(status, DBStatus.s_data_issue)
-        self.assertEqual(alg.alg_id, -100)
+        self.assertEqual(alg.alg_id, ERROR_ID)
         self.assertEqual(self.core.db._getNextID("1u"), 1)
         self.assertEqual(self.core.db._getNextID("1u1a"), DBStatus.s_data_issue)
 
@@ -129,8 +130,8 @@ class DBTest(TestCase):
         self.assertEqual(status2, DBStatus.s_data_issue)
         self.assertEqual(status3, DBStatus.s_data_issue)
         self.assertEqual(alg1.alg_id, 1)
-        self.assertEqual(alg2.alg_id, -100)
-        self.assertEqual(alg3.alg_id, -100)
+        self.assertEqual(alg2.alg_id, ERROR_ID)
+        self.assertEqual(alg3.alg_id, ERROR_ID)
         self.assertEqual(self.core.db._getNextID("1u"), 2)
         self.assertEqual(self.core.db._getNextID("2u"), 1)
         self.assertEqual(self.core.db._getNextID("1u1a"), 1)
@@ -153,7 +154,7 @@ class DBTest(TestCase):
         alg1 = (self.core.db.addAlg(alg1))[1]
         status, alg2 = self.core.db.getAlgByTitle(alg1.title + "typo")
         self.assertEqual(status, DBStatus.s_data_issue)
-        self.assertEqual(alg2.alg_id, -100)
+        self.assertEqual(alg2.alg_id, ERROR_ID)
 
     def test_can_get_author_alg_by_correct_alg_id(self):
         user1 = User(0, "LOGIN_USER1", "FN_USER1", "SN_USER1", "MN_USER1", [])
@@ -193,9 +194,9 @@ class DBTest(TestCase):
         self.assertEqual(status1, DBStatus.s_data_issue)
         self.assertEqual(status2, DBStatus.s_data_issue)
         self.assertEqual(status3, DBStatus.s_data_issue)
-        self.assertEqual(alg4.alg_id, -100)
-        self.assertEqual(alg5.alg_id, -100)
-        self.assertEqual(alg6.alg_id, -100)
+        self.assertEqual(alg4.alg_id, ERROR_ID)
+        self.assertEqual(alg5.alg_id, ERROR_ID)
+        self.assertEqual(alg6.alg_id, ERROR_ID)
 
     def test_cant_get_author_alg_by_incorrect_user_id_1(self):
         user1 = User(0, "LOGIN_USER1", "FN_USER1", "SN_USER1", "MN_USER1", [])
@@ -214,9 +215,9 @@ class DBTest(TestCase):
         self.assertEqual(status1, DBStatus.s_data_issue)
         self.assertEqual(status2, DBStatus.s_data_issue)
         self.assertEqual(status3, DBStatus.s_data_issue)
-        self.assertEqual(alg4.alg_id, -100)
-        self.assertEqual(alg5.alg_id, -100)
-        self.assertEqual(alg6.alg_id, -100)
+        self.assertEqual(alg4.alg_id, ERROR_ID)
+        self.assertEqual(alg5.alg_id, ERROR_ID)
+        self.assertEqual(alg6.alg_id, ERROR_ID)
 
     def test_cant_get_author_alg_by_incorrect_user_id_2(self):
         user1 = User(0, "LOGIN_USER1", "FN_USER1", "SN_USER1", "MN_USER1", [])
@@ -231,7 +232,7 @@ class DBTest(TestCase):
         alg3 = (self.core.db.addAlg(alg3))[1]
         status, alg5 = self.core.db.getAuthorAlgByAlgID(user2.user_id, alg2.alg_id)
         self.assertEqual(status, DBStatus.s_data_issue)
-        self.assertEqual(alg5.alg_id, -100)
+        self.assertEqual(alg5.alg_id, ERROR_ID)
 
     def test_can_get_all_author_algs_by_correct_user_id(self):
         user1 = User(0, "LOGIN_USER1", "FN_USER1", "SN_USER1", "MN_USER1", [])
@@ -267,8 +268,8 @@ class DBTest(TestCase):
         status2, algs2 = self.core.db.getAllAuthorAlgs(user2.user_id + len("typo"))
         self.assertEqual(status1, DBStatus.s_data_issue)
         self.assertEqual(status2, DBStatus.s_data_issue)
-        self.assertEqual(algs1[0].alg_id, -100)
-        self.assertEqual(algs2[0].alg_id, -100)
+        self.assertEqual(algs1[0].alg_id, ERROR_ID)
+        self.assertEqual(algs2[0].alg_id, ERROR_ID)
 
     def test_can_add_diff_tests(self):
         user1 = User(0, "LOGIN_USER1", "FN_USER1", "SN_USER1", "MN_USER1", [])
@@ -321,9 +322,9 @@ class DBTest(TestCase):
         self.assertEqual(status1, DBStatus.s_data_issue)
         self.assertEqual(status2, DBStatus.s_ok)
         self.assertEqual(status3, DBStatus.s_data_issue)
-        self.assertEqual(test1.test_id, -100)
+        self.assertEqual(test1.test_id, ERROR_ID)
         self.assertEqual(test2.test_id, 1)
-        self.assertEqual(test3.test_id, -100)
+        self.assertEqual(test3.test_id, ERROR_ID)
         self.assertEqual(self.core.db._getNextID("1u1a"), 2)
         self.assertEqual(self.core.db._getNextID("1u2a"), 1)
         self.assertEqual(self.core.db._getNextID("2u1a"), 1)
@@ -387,10 +388,10 @@ class DBTest(TestCase):
         self.assertEqual(status2, DBStatus.s_data_issue)
         self.assertEqual(status3, DBStatus.s_data_issue)
         self.assertEqual(status4, DBStatus.s_data_issue)
-        self.assertEqual(test5.test_id, -100)
-        self.assertEqual(test6.test_id, -100)
-        self.assertEqual(test7.test_id, -100)
-        self.assertEqual(test8.test_id, -100)
+        self.assertEqual(test5.test_id, ERROR_ID)
+        self.assertEqual(test6.test_id, ERROR_ID)
+        self.assertEqual(test7.test_id, ERROR_ID)
+        self.assertEqual(test8.test_id, ERROR_ID)
 
     def test_can_get_all_alg_tests_by_correct_ids(self):
         user1 = User(0, "LOGIN_USER1", "FN_USER1", "SN_USER1", "MN_USER1", [])
@@ -447,9 +448,9 @@ class DBTest(TestCase):
         self.assertEqual(status1, DBStatus.s_data_issue)
         self.assertEqual(status2, DBStatus.s_data_issue)
         self.assertEqual(status3, DBStatus.s_data_issue)
-        self.assertEqual(tests1[0].test_id, -100)
-        self.assertEqual(tests2[0].test_id, -100)
-        self.assertEqual(tests3[0].test_id, -100)
+        self.assertEqual(tests1[0].test_id, ERROR_ID)
+        self.assertEqual(tests2[0].test_id, ERROR_ID)
+        self.assertEqual(tests3[0].test_id, ERROR_ID)
 
     def test_can_add_task_with_correct_alg_title(self):
         user = User(0, "LOGIN_USER", "FN_USER", "SN_USER", "MN_USER", [])
@@ -477,8 +478,8 @@ class DBTest(TestCase):
         status2, task2 = self.core.db.addTask(task2)
         self.assertEqual(status1, DBStatus.s_data_issue)
         self.assertEqual(status2, DBStatus.s_data_issue)
-        self.assertEqual(task1.task_id, -100)
-        self.assertEqual(task2.task_id, -100)
+        self.assertEqual(task1.task_id, ERROR_ID)
+        self.assertEqual(task2.task_id, ERROR_ID)
         self.assertEqual(self.core.db._getNextID("tasks"), 1)
 
     def test_can_get_task_with_correct_id(self):
@@ -510,8 +511,8 @@ class DBTest(TestCase):
         status2, task4 = self.core.db.getTask(task2.task_id + len("typo"))
         self.assertEqual(status1, DBStatus.s_data_issue)
         self.assertEqual(status2, DBStatus.s_data_issue)
-        self.assertEqual(task3.task_id, -100)
-        self.assertEqual(task4.task_id, -100)
+        self.assertEqual(task3.task_id, ERROR_ID)
+        self.assertEqual(task4.task_id, ERROR_ID)
 
     def test_can_get_all_task(self):
         user = User(0, "LOGIN_USER", "FN_USER", "SN_USER", "MN_USER", [])
