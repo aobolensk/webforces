@@ -119,7 +119,18 @@ class profile(QtWidgets.QGroupBox, Profile.Ui_GroupBox):
             self.MiddleNameEdit.setText(profile["middle_name"])
 
     def changeUser(self):
-        pass
+        response = requests.post(
+            'http://127.0.0.1:8000/api/users/' + self.login + '/',
+            data={'first_name': self.FirstNameEdit.text(),
+                  'second_name': self.SecondNameEdit.text(),
+                  'middle_name': self.MiddleNameEdit.text()
+                  },
+            headers={'Authorization': 'Token ' + self.token}
+        )
+        status = ""
+        if response.status_code == 200:
+            status = response.json()
+        return status
 
     def setDisabled(self):
         self.UsernameEdit.setReadOnly(True)
