@@ -6,13 +6,14 @@ python manage.py createsuperuser
 ```
 
 ## How to run tests?
-```bash
-python manage.py test
-```
-Alternative (using pytest):
+Preferable way:
 ```bash
 pytest
 pytest --html=report.html
+```
+Alternative:
+```bash
+python manage.py test
 ```
 
 ## How to use API?
