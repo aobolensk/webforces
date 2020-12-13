@@ -1,6 +1,6 @@
 from django.test import TestCase
 from webforces.server.core import Core
-from webforces.server.structs import DBStatus, ERROR_ID, User, Algorithm, Test, Task, Stats
+from webforces.server.structs import DBStatus, ERROR_ID, User, Algorithm, Test, Task
 
 
 class CoreTest(TestCase):

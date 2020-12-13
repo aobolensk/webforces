@@ -1,4 +1,3 @@
-from unittest import skip
 from django.contrib.auth.models import User
 from django.test import Client, TestCase
 from webforces.server.core import Core
@@ -58,6 +57,7 @@ class RestApiRegularUserTest(RestApiSuperUserTest):
 
     def tearDown(self):
         self.core.db.dropAll()
+
 
 class RestApiGuestTest(RestApiRegularUserTest):
     """Test REST API with guest permission level"""

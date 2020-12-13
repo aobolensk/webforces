@@ -65,6 +65,7 @@ class MongoDBWorker(dbworker.DBWorker):
                 {"$set": {"last_id": str(new_id)}}
             )
         except Exception as e:
+            logger.error(f"MongoDBWorker connection failed: {e}")
             return DBStatus.s_data_issue
         return new_id
 
@@ -75,6 +76,7 @@ class MongoDBWorker(dbworker.DBWorker):
                 {"name": name, "last_id": "0"}
             )
         except Exception as e:
+            logger.error(f"MongoDBWorker connection failed: {e}")
             return DBStatus.s_data_issue
         return DBStatus.s_ok
 
