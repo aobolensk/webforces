@@ -2,7 +2,7 @@ from typing import Tuple, List
 
 import pymongo
 from loguru import logger
-from webforces.server.structs import DBStatus, User, Algorithm, Test
+from webforces.server.structs import DBStatus, User, Algorithm, Test, Task
 from webforces.server.interface import dbworker
 from webforces.settings import MONGODB_PROPERTIES
 
@@ -291,57 +291,34 @@ class MongoDBWorker(dbworker.DBWorker):
         logger.debug("Tests were found")
         return (DBStatus.s_ok, tests)
 
-# TODO
-    def bindAlg(self, alg_id, user_id) -> DBStatus:
+    def addTask(self, task) -> Tuple[DBStatus, Task]:
         try:
-            user = self.getUserByID(user_id)
-            for a in user.algs_id:
-                if a.title == alg.title:
-                    logger.error("This algorithm is already binded")
-                    return DBStatus
-            # update author's list of algs
-            new_list_algs = (user_d["alg_id"]).append(alg_id)
-            users_collection = self.db["users"]
-            users_collection.update_one(
-                {"_id": user_id},
-                {"$set": {"algs_id": new_list_algs}})
-        except Exception as e:
-            logger.error(f"MongoDBWorker connection failed: {e}")
-            return 1
-        logger.debug("Algorithm was successfully binded")
-        return 0
-
-    def getAlgByID(self, id) -> dict():
-        try:
-            algs_collection = self.db["algs"]
-            alg_d = algs_collection.find_one({"_id": id})
-            if alg_d is None:
+            # check alg
+            st = (self.getAlgByTitle(task.alg_title))[0]
+            if st != DBStatus.s_data_issue:
                 logger.error("This algorithm does not exist")
-                return 2
+                return (DBStatus.s_data_issue, Task(-100, "error"))
+            # add task
+            tasks_collection = self.db["tasks"]
+            task.task_id = self._getNextID("tasks")
+            if task.task_id == DBStatus.s_data_issue:
+                return (DBStatus.s_connection_error, Task(-100, "error"))
+            tasks_collection.insert_one(task.__dict__)
         except Exception as e:
             logger.error(f"MongoDBWorker connection failed: {e}")
-            return 1
-        logger.debug("Algorithm was found")
-        return alg_d
+            return (DBStatus.s_connection_error, Task(-100, "error"))
+        logger.debug("New task was successfully added")
+        return (DBStatus.s_ok, task)
 
-    def getTestByID(self, id) -> dict():
+    def getTask(self, task_id) -> Tuple[DBStatus, Task]:
         try:
-            tests_collection = self.db["tests"]
-            test_d = tests_collection.find_one({"_id": id})
-            if test_d is None:
-                logger.error("This test does not exist")
-                return 2
+            tasks_collection = self.db["tasks"]
+            task_d = tasks_collection.find_one({"task_id": task_id})
+            if task_d is None:
+                logger.error("This task does not exist")
+                return (DBStatus.s_data_issue, Task(-100, "error"))
         except Exception as e:
             logger.error(f"MongoDBWorker connection failed: {e}")
-            return 1
-        logger.debug("Test was found")
-        return test_d
-
-    def _addTest(self, test_d):
-        try:
-            tests_collection = self.db["tests"]
-            id = tests_collection.insert_one(test_d).inserted_id
-        except Exception as e:
-            logger.error(f"MongoDBWorker connection failed: {e}")
-            return 1
-        return id
+            return (DBStatus.s_connection_error, Task(-100, "error"))
+        logger.debug("Task was found")
+        return (DBStatus.s_ok, Task.fromDict(task_d))

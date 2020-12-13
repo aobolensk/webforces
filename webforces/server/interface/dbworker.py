@@ -1,7 +1,7 @@
 from typing import Tuple, List
 
 import abc
-from webforces.server.structs import DBStatus, User, Algorithm, Test
+from webforces.server.structs import DBStatus, User, Algorithm, Test, Task
 
 
 class DBWorker(abc.ABC):
@@ -57,15 +57,10 @@ class DBWorker(abc.ABC):
     def getAllAlgTests(self, author_id, alg_id) -> Tuple[DBStatus, List[Test]]:
         pass
 
-# TODO
     @abc.abstractmethod
-    def bindAlg(self, alg, user_id) -> DBStatus:
+    def addTask(self, task) -> Tuple[DBStatus, Task]:
         pass
 
     @abc.abstractmethod
-    def getAlgByID(self, id) -> dict():
-        pass
-
-    @abc.abstractmethod
-    def getTestByID(self, id) -> dict():
+    def getTask(self, task_id) -> Tuple[DBStatus, Task]:
         pass

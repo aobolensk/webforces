@@ -59,9 +59,17 @@ class Test:
             dict["title"], dict["source"]
         )
 
+
 @dataclass
 class Task:
     task_id: int
-    alg_id: int
+    alg_title: str
     status: int = 0
     message: str = ''
+
+    @classmethod
+    def fromDict(cls, dict):
+        return cls(
+            dict["task_id"], dict["alg_id"],
+            dict["status"], dict["message"]
+        )
