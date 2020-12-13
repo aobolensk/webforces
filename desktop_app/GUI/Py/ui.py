@@ -4,6 +4,8 @@ import requests
 import LoginWindow
 import MainWindow
 import SignupWindow
+import Profile
+import Statistic
 
 
 class LoginWindow(QtWidgets.QMainWindow, LoginWindow.Ui_MainWindow):
@@ -21,7 +23,7 @@ class LoginWindow(QtWidgets.QMainWindow, LoginWindow.Ui_MainWindow):
         password = self.passwordEdit.text()
         status = self.checkAuth(login, password)
         if status == 1:
-            self.mainWin = MainWindow(self.token)
+            self.mainWin = MainWindow(self.token, login)
             self.mainWin.show()
             self.close()
         elif status == 0:
@@ -75,11 +77,63 @@ class SignupWindow(QtWidgets.QMainWindow, SignupWindow.Ui_MainWindow):
         return 1
 
 
+class statistic(QtWidgets.QGroupBox, Statistic.Ui_GroupBox):
+    def __init__(self, parent, token):
+        super().__init__(parent)
+        self.setupUi(self)
+        self.token = token
+        self.getStats()
+
+    def getStats(self):
+        response = requests.get('http://127.0.0.1:8000/api/stats/', headers={'Authorization': 'Token ' + self.token})
+        if response.status_code == 200:
+            self.results.setText("")
+            statistics = response.json()
+            for key, value in statistics.items():
+                self.results.setText(self.results.text() + key + " : " + value + '\n')
+
+
+class profile(QtWidgets.QGroupBox, Profile.Ui_GroupBox):
+    def __init__(self, parent, token, login):
+        super().__init__(parent)
+        self.setupUi(self)
+        self.login = login
+        self.token = token
+        self.getUser()
+        self.state = 1
+        self.setDisabled()
+        self.EditButton.clicked.connect(self.setDisabled)
+        self.saveButton.clicked.connect(self.changeUser)
+
+    def getUser(self):
+        response = requests.get('http://127.0.0.1:8000/api/users/' + self.login,
+                                headers={'Authorization': 'Token ' + self.token})
+        if response.status_code == 200:
+            profile = response.json()
+            self.id = profile['id']
+            self.UsernameEdit.setText(profile['login'])
+            self.FirstNameEdit.setText(profile["first_name"])
+            self.SecondNameEdit.setText(profile["second_name"])
+            self.MiddleNameEdit.setText(profile["middle_name"])
+
+    def changeUser(self):
+        pass
+
+    def setDisabled(self):
+        self.UsernameEdit.setReadOnly(True)
+        self.FirstNameEdit.setReadOnly(self.state)
+        self.SecondNameEdit.setReadOnly(self.state)
+        self.MiddleNameEdit.setReadOnly(self.state)
+        self.state = 1 - self.state
+
+
 class MainWindow(QtWidgets.QMainWindow, MainWindow.Ui_MainWindow):
-    def __init__(self, token):
+    def __init__(self, token, login):
         super().__init__()
         self.token = token
+        self.login = login
         self.setupUi(self)
+        self.InfoField.setVisible(False)
         self.storeButton.clicked.connect(self.storeBtn)
         self.profileButton.clicked.connect(self.profileBtn)
         self.statisticButton.clicked.connect(self.statisticBtn)
@@ -89,15 +143,20 @@ class MainWindow(QtWidgets.QMainWindow, MainWindow.Ui_MainWindow):
         print("storeBtn")
 
     def profileBtn(self):
-        print("profileBtn")
+        self.InfoField.setVisible(False)
+        self.InfoField = profile(self.ViewField, self.token, self.login)
+        self.resizeEvent()
+        self.InfoField.setVisible(True)
 
     def statisticBtn(self):
-        response = requests.get('http://127.0.0.1:8000/api/stats/', headers={'Authorization': 'Token ' + self.token})
-        if response.status_code == 200:
-            self.results.setText("")
-            statistics = response.json()
-            for key, value in statistics.items():
-                self.results.setText(self.results.text() + key + " : " + value + '\n')
+        self.InfoField.setVisible(False)
+        self.InfoField = statistic(self.ViewField, self.token)
+        self.resizeEvent()
+        self.InfoField.setVisible(True)
+
+    def resizeEvent(self, event=None):
+        self.InfoField.move(self.ViewField.width()/2 - self.InfoField.width()/2,
+                            self.ViewField.height()/2 - self.InfoField.height()/2)
 
     def outBtn(self):
         self.loginWin = LoginWindow()
