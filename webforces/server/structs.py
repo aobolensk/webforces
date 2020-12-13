@@ -63,6 +63,11 @@ class Test:
         )
 
 
+Test.__test__ = False
+# Added to suppress pytest collection warning:
+# cannot collect test class 'Test' because it has a __init__ constructor
+
+
 @dataclass
 class Task:
     task_id: int
