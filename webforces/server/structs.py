@@ -75,8 +75,9 @@ class Task:
         )
 
 
+@dataclass
 class Stats:
     num_of_users: int
     num_of_algs: int
     num_of_tests: int
-    num_of_task: int
+    num_of_tasks: int

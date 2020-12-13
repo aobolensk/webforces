@@ -1,6 +1,6 @@
 from django.test import TestCase
 from webforces.server.core import Core
-from webforces.server.structs import DBStatus, User, Algorithm, Test, Task
+from webforces.server.structs import DBStatus, User, Algorithm, Test, Task, Stats
 
 
 class CoreTest(TestCase):
@@ -70,6 +70,16 @@ class DBTest(TestCase):
         status, user2 = self.core.db.getUserByLogin(user1.login + "typo")
         self.assertEqual(status, DBStatus.s_data_issue)
         self.assertEqual(user2.user_id, -100)
+
+    def test_can_get_all_users(self):
+        user1 = User(0, "LOGIN_USER1", "FN_USER1", "SN_USER1", "MN_USER1", [])
+        user2 = User(0, "LOGIN_USER2", "FN_USER2", "SN_USER2", "MN_USER2", [])
+        user1 = (self.core.db.addUser(user1))[1]
+        user2 = (self.core.db.addUser(user2))[1]
+        status, users = self.core.db.getAllUsers()
+        self.assertEqual(status, DBStatus.s_ok)
+        self.assertEqual(users[0], user1)
+        self.assertEqual(users[1], user2)
 
     def test_can_add_diff_algs(self):
         user1 = User(0, "LOGIN_USER1", "FN_USER1", "SN_USER1", "MN_USER1", [])
@@ -382,7 +392,7 @@ class DBTest(TestCase):
         self.assertEqual(test7.test_id, -100)
         self.assertEqual(test8.test_id, -100)
 
-    def test_can_get_all_alg_test_by_correct_ids(self):
+    def test_can_get_all_alg_tests_by_correct_ids(self):
         user1 = User(0, "LOGIN_USER1", "FN_USER1", "SN_USER1", "MN_USER1", [])
         user2 = User(0, "LOGIN_USER2", "FN_USER2", "SN_USER2", "MN_USER2", [])
         user1 = (self.core.db.addUser(user1))[1]
@@ -412,7 +422,7 @@ class DBTest(TestCase):
         self.assertEqual(tests2[0], test3)
         self.assertEqual(tests3[0], test4)
 
-    def test_cant_get_all_alg_test_by_incorrect_ids(self):
+    def test_cant_get_all_alg_tests_by_incorrect_ids(self):
         user1 = User(0, "LOGIN_USER1", "FN_USER1", "SN_USER1", "MN_USER1", [])
         user2 = User(0, "LOGIN_USER2", "FN_USER2", "SN_USER2", "MN_USER2", [])
         user1 = (self.core.db.addUser(user1))[1]
@@ -516,3 +526,35 @@ class DBTest(TestCase):
         self.assertEqual(status, DBStatus.s_ok)
         self.assertEqual(tasks[0], task1)
         self.assertEqual(tasks[1], task2)
+
+    def test_can_get_stats(self):
+        user1 = User(0, "LOGIN_USER1", "FN_USER1", "SN_USER1", "MN_USER1", [])
+        user2 = User(0, "LOGIN_USER2", "FN_USER2", "SN_USER2", "MN_USER2", [])
+        user1 = (self.core.db.addUser(user1))[1]
+        user2 = (self.core.db.addUser(user2))[1]
+        alg1 = Algorithm(0, "TITLE_ALG1", user1.user_id, "SOURCE_ALG1", [], 0)
+        alg2 = Algorithm(0, "TITLE_ALG2", user1.user_id, "SOURCE_ALG2", [], 0)
+        alg3 = Algorithm(0, "TITLE_ALG3", user2.user_id, "SOURCE_ALG3", [], 0)
+        alg1 = (self.core.db.addAlg(alg1))[1]
+        alg2 = (self.core.db.addAlg(alg2))[1]
+        alg3 = (self.core.db.addAlg(alg3))[1]
+        test1 = Test(0, alg1.title, "TITLE_TEST1", "SOURCE_TEST1")
+        test2 = Test(0, alg1.title, "TITLE_TEST2", "SOURCE_TEST2")
+        test3 = Test(0, alg2.title, "TITLE_TEST3", "SOURCE_TEST3")
+        test4 = Test(0, alg3.title, "TITLE_TEST4", "SOURCE_TEST4")
+        test1 = (self.core.db.addTest(test1))[1]
+        test2 = (self.core.db.addTest(test2))[1]
+        test3 = (self.core.db.addTest(test3))[1]
+        test4 = (self.core.db.addTest(test4))[1]
+        task1 = Task(0, alg1.title, 0, "MESSAGE_TASK1")
+        task2 = Task(0, alg2.title, 0, "MESSAGE_TASK2")
+        task3 = Task(0, alg3.title, 0, "MESSAGE_TASK3")
+        task1 = (self.core.db.addTask(task1))[1]
+        task2 = (self.core.db.addTask(task2))[1]
+        task3 = (self.core.db.addTask(task3))[1]
+        status, stats = self.core.db.getStats()
+        self.assertEqual(status, DBStatus.s_ok)
+        self.assertEqual(stats.num_of_users, 2)
+        self.assertEqual(stats.num_of_algs, 3)
+        self.assertEqual(stats.num_of_tests, 4)
+        self.assertEqual(stats.num_of_tasks, 3)

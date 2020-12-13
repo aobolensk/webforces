@@ -2,7 +2,7 @@ from typing import Tuple, List
 
 import pymongo
 from loguru import logger
-from webforces.server.structs import DBStatus, User, Algorithm, Test, Task
+from webforces.server.structs import DBStatus, User, Algorithm, Test, Task, Stats
 from webforces.server.interface import dbworker
 from webforces.settings import MONGODB_PROPERTIES
 
@@ -130,6 +130,19 @@ class MongoDBWorker(dbworker.DBWorker):
             return (DBStatus.s_connection_error, User(-100))
         logger.debug("User was found")
         return (DBStatus.s_ok, User.fromDict(user_d))
+
+    def getAllUsers(self) -> Tuple[DBStatus, List[User]]:
+        try:
+            users_collection = self.db["users"]
+            users_tmp = list(users_collection.find({}))
+            users = []
+            for user_d in users_tmp:
+                users.append(User.fromDict(user_d))
+        except Exception as e:
+            logger.error(f"MongoDBWorker connection failed: {e}")
+            return (DBStatus.s_connection_error, [User(-100)])
+        logger.debug("Users was found")
+        return (DBStatus.s_ok, users)
 
     def addAlg(self, alg) -> Tuple[DBStatus, Algorithm]:
         try:
@@ -333,5 +346,24 @@ class MongoDBWorker(dbworker.DBWorker):
         except Exception as e:
             logger.error(f"MongoDBWorker connection failed: {e}")
             return (DBStatus.s_connection_error, [Task(-100, "error")])
-        logger.debug("Task was found")
+        logger.debug("Tasks were found")
         return (DBStatus.s_ok, tasks)
+
+    def getStats(self) -> Tuple[DBStatus, Stats]:
+        try:
+            users = (self.getAllUsers())[1]
+            num_of_users = len(users)
+            num_of_algs = 0
+            num_of_tests = 0
+            for user in users:
+                user_algs = (self.getAllAuthorAlgs(user.user_id))[1]
+                num_of_algs += len(user_algs)
+                for alg in user_algs:
+                    alg_tests = (self.getAllAlgTests(user.user_id, alg.alg_id))[1]
+                    num_of_tests += len(alg_tests)
+            num_of_tasks = len((self.getAllTasks())[1])
+        except Exception as e:
+            logger.error(f"MongoDBWorker connection failed: {e}")
+            return (DBStatus.s_connection_error, Stats(-100, -100, -100, -100))
+        logger.debug("Stats were collected")
+        return (DBStatus.s_ok, Stats(num_of_users, num_of_algs, num_of_tests, num_of_tasks))
