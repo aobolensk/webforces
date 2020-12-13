@@ -3,6 +3,9 @@ from typing import List
 from enum import Enum
 
 
+ERROR_ID = -100
+
+
 class DBStatus(Enum):
     s_ok = 0
     s_connection_error = -1
@@ -36,17 +39,48 @@ class Algorithm:
     tests_id: List[int] = field(default_factory=list)
     lang_id: int = 0
 
+    @classmethod
+    def fromDict(cls, dict):
+        return cls(
+            dict["alg_id"], dict["title"],
+            dict["author_id"], dict["source"], dict["tests_id"],
+            dict["lang_id"]
+        )
+
 
 @dataclass
 class Test:
     test_id: int
+    alg_title: str = ''
     title: str = ''
     source: str = ''
+
+    @classmethod
+    def fromDict(cls, dict):
+        return cls(
+            dict["test_id"], dict["alg_title"],
+            dict["title"], dict["source"]
+        )
 
 
 @dataclass
 class Task:
     task_id: int
-    alg_id: int
+    alg_title: str
     status: int = 0
     message: str = ''
+
+    @classmethod
+    def fromDict(cls, dict):
+        return cls(
+            dict["task_id"], dict["alg_title"],
+            dict["status"], dict["message"]
+        )
+
+
+@dataclass
+class Stats:
+    num_of_users: int
+    num_of_algs: int
+    num_of_tests: int
+    num_of_tasks: int

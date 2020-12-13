@@ -1,6 +1,7 @@
+from typing import Tuple, List
+
 import abc
-from webforces.server.structs import User
-from webforces.server.structs import DBStatus
+from webforces.server.structs import DBStatus, User, Algorithm, Test, Task, Stats
 
 
 class DBWorker(abc.ABC):
@@ -17,38 +18,61 @@ class DBWorker(abc.ABC):
         pass
 
     @abc.abstractmethod
-    def addUser(self, user) -> (DBStatus, User):
+    def addUser(self, user) -> Tuple[DBStatus, User]:
         pass
 
     @abc.abstractmethod
-    def getUserByID(self, id) -> (DBStatus, User):
+    def getUserByID(self, id) -> Tuple[DBStatus, User]:
         pass
 
     @abc.abstractmethod
-    def getUserByLogin(self, login) -> (DBStatus, User):
-        pass
-
-# TODO
-    @abc.abstractmethod
-    def getAlgByTitle(self, title) -> dict():
+    def getUserByLogin(self, login) -> Tuple[DBStatus, User]:
         pass
 
     @abc.abstractmethod
-    def getAlgByID(self, id) -> dict():
+    def getAllUsers(self) -> Tuple[DBStatus, List[User]]:
         pass
 
     @abc.abstractmethod
-    def addAlg(self, alg_d):
+    def addAlg(self, alg) -> Tuple[DBStatus, Algorithm]:
         pass
 
     @abc.abstractmethod
-    def bindAlgToUser(self, user_id, alg_id) -> int:
+    def getAlgByTitle(self, title) -> Tuple[DBStatus, Algorithm]:
         pass
 
     @abc.abstractmethod
-    def getTestByID(self, id) -> dict():
+    def getAuthorAlgByAlgID(self, author_id, alg_id) -> Tuple[DBStatus, Algorithm]:
         pass
 
     @abc.abstractmethod
-    def addTest(self, user_id, test_d):
+    def getAllAuthorAlgs(self, author_id) -> Tuple[DBStatus, List[Algorithm]]:
+        pass
+
+    @abc.abstractmethod
+    def addTest(self, test) -> Tuple[DBStatus, Test]:
+        pass
+
+    @abc.abstractmethod
+    def getTest(self, author_id, alg_id, test_id) -> Tuple[DBStatus, Test]:
+        pass
+
+    @abc.abstractmethod
+    def getAllAlgTests(self, author_id, alg_id) -> Tuple[DBStatus, List[Test]]:
+        pass
+
+    @abc.abstractmethod
+    def addTask(self, task) -> Tuple[DBStatus, Task]:
+        pass
+
+    @abc.abstractmethod
+    def getTask(self, task_id) -> Tuple[DBStatus, Task]:
+        pass
+
+    @abc.abstractmethod
+    def getAllTasks(self) -> Tuple[DBStatus, List[Task]]:
+        pass
+
+    @abc.abstractmethod
+    def getStats(self) -> Tuple[DBStatus, Stats]:
         pass

@@ -11,6 +11,7 @@ class RestApiSuperUserTest(TestCase):
 
     def setUp(self):
         self.core = Core()
+        self.core.db._populateIds()
         user = User.objects.create(username=self.username)
         user.set_password(self.password)
         user.is_staff = True
@@ -19,6 +20,9 @@ class RestApiSuperUserTest(TestCase):
         user.save()
         self.client = Client()
         self.client.login(username=self.username, password=self.password)
+
+    def tearDown(self):
+        self.core.db.dropAll()
 
     def testStatsEndpoint(self):
         response = self.client.get('/api/stats/')
@@ -44,11 +48,15 @@ class RestApiRegularUserTest(RestApiSuperUserTest):
 
     def setUp(self):
         self.core = Core()
+        self.core.db._populateIds()
         user = User.objects.create(username=self.username)
         user.set_password(self.password)
         user.save()
         self.client = Client()
         self.client.login(username=self.username, password=self.password)
+
+    def tearDown(self):
+        self.core.db.dropAll()
 
 
 class RestApiGuestTest(RestApiRegularUserTest):
@@ -59,7 +67,11 @@ class RestApiGuestTest(RestApiRegularUserTest):
 
     def setUp(self):
         self.core = Core()
+        self.core.db._populateIds()
         self.client = Client()
+
+    def tearDown(self):
+        self.core.db.dropAll()
 
     def testStatsEndpoint(self):
         response = self.client.get('/api/stats/')
