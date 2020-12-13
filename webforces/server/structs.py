@@ -84,3 +84,4 @@ class Stats:
     num_of_algs: int
     num_of_tests: int
     num_of_tasks: int
+    name: str = "webforces"

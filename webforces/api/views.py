@@ -12,10 +12,12 @@ class StatsView(APIView):
     permission_classes = (IsAuthenticated,)
 
     def get(self, request):
-        stats = {
-            "name": "webforces",
-        }
-        return Response(stats)
+        core = Core()
+        status, stats = core.db.getStats()
+        if status != DBStatus.s_ok:
+            logger.error("Could not get stats")
+            return Response({"error": "Could not get stats"}, status=500)
+        return Response(stats.__dict__)
 
 
 class UsersView(APIView):
