@@ -6,6 +6,7 @@ from django.contrib.auth.forms import AuthenticationForm, UserCreationForm
 from django.core.exceptions import PermissionDenied
 from django.shortcuts import redirect, render
 from django.views.generic.base import TemplateView
+from loguru import logger
 
 from webforces.server.core import Core
 from webforces.server.structs import DBStatus
@@ -67,10 +68,13 @@ class StatsView(MainPageView):
         if not self.request.user.is_superuser:
             raise PermissionDenied
         context = super().get_context_data(**kwargs)
-        stats = {
-            "name": "webforces",
-        }
-        context["stats"] = stats
+        core = Core()
+        status, stats = core.db.getStats()
+        logger.warning(stats)
+        if status != DBStatus.s_ok:
+            logger.error("Could not get stats")
+            raise Exception("Could not get stats")
+        context["stats"] = stats.__dict__
         return context
 
 
