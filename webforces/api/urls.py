@@ -7,5 +7,6 @@ urlpatterns = [
     path('get_token/', views.GetTokenView.as_view()),
     path('stats/', views.StatsView.as_view()),
     path('users/', views.UsersView.as_view()),
-    path('users/<int:pk>/', views.UserView.as_view()),
+    path('users/<int:pk>/', views.UserViewID.as_view()),
+    path('users/<str:login>/', views.UserViewLogin.as_view()),
 ]

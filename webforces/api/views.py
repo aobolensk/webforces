@@ -30,12 +30,33 @@ class UsersView(APIView):
         return Response(data)
 
 
-class UserView(APIView):
+class UserViewID(APIView):
     permission_classes = (IsAuthenticated,)
 
     def get(self, request, pk):
         core = Core()
         status, user = core.db.getUserByID(pk)
+
+        if status != DBStatus.s_ok:
+            raise Http404("User does not exist")
+
+        data = {
+            "id": user.user_id,
+            "login": user.login,
+            "first_name": user.first_name,
+            "second_name": user.second_name,
+            "middle_name": user.middle_name,
+        }
+
+        return Response(data)
+
+
+class UserViewLogin(APIView):
+    permission_classes = (IsAuthenticated,)
+
+    def get(self, request, login):
+        core = Core()
+        status, user = core.db.getUserByLogin(login)
 
         if status != DBStatus.s_ok:
             raise Http404("User does not exist")
