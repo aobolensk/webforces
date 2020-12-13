@@ -69,7 +69,3 @@ class DBWorker(abc.ABC):
     @abc.abstractmethod
     def getTestByID(self, id) -> dict():
         pass
-
-    @abc.abstractmethod
-    def addTest(self, user_id, test_d):
-        pass

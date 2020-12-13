@@ -1,6 +1,6 @@
 from django.test import TestCase
 from webforces.server.core import Core
-from webforces.server.structs import DBStatus, User, Algorithm
+from webforces.server.structs import DBStatus, User, Algorithm, Test
 
 
 class CoreTest(TestCase):
@@ -259,3 +259,185 @@ class DBTest(TestCase):
         self.assertEqual(status2, DBStatus.s_data_issue)
         self.assertEqual(algs1[0].alg_id, -100)
         self.assertEqual(algs2[0].alg_id, -100)
+
+    def test_can_add_diff_tests(self):
+        user1 = User(0, "LOGIN_USER1", "FN_USER1", "SN_USER1", "MN_USER1", [])
+        user2 = User(0, "LOGIN_USER2", "FN_USER2", "SN_USER2", "MN_USER2", [])
+        user1 = (self.core.db.addUser(user1))[1]
+        user2 = (self.core.db.addUser(user2))[1]
+        alg1 = Algorithm(0, "TITLE_ALG1", user1.user_id, "SOURCE_ALG1", [], 0)
+        alg2 = Algorithm(0, "TITLE_ALG2", user1.user_id, "SOURCE_ALG2", [], 0)
+        alg3 = Algorithm(0, "TITLE_ALG3", user2.user_id, "SOURCE_ALG3", [], 0)
+        alg1 = (self.core.db.addAlg(alg1))[1]
+        alg2 = (self.core.db.addAlg(alg2))[1]
+        alg3 = (self.core.db.addAlg(alg3))[1]
+        test1 = Test(0, alg1.title, "TITLE_TEST1", "SOURCE_TEST1")
+        test2 = Test(0, alg1.title, "TITLE_TEST2", "SOURCE_TEST2")
+        test3 = Test(0, alg2.title, "TITLE_TEST3", "SOURCE_TEST3")
+        test4 = Test(0, alg3.title, "TITLE_TEST4", "SOURCE_TEST4")
+        status1, test1 = self.core.db.addTest(test1)
+        status2, test2 = self.core.db.addTest(test2)
+        status3, test3 = self.core.db.addTest(test3)
+        status4, test4 = self.core.db.addTest(test4)
+        self.assertEqual(status1, DBStatus.s_ok)
+        self.assertEqual(status2, DBStatus.s_ok)
+        self.assertEqual(status3, DBStatus.s_ok)
+        self.assertEqual(status4, DBStatus.s_ok)
+        self.assertEqual(test1.test_id, 1)
+        self.assertEqual(test2.test_id, 2)
+        self.assertEqual(test3.test_id, 1)
+        self.assertEqual(test4.test_id, 1)
+        self.assertEqual(self.core.db._getNextID("1u1a"), 3)
+        self.assertEqual(self.core.db._getNextID("1u2a"), 2)
+        self.assertEqual(self.core.db._getNextID("2u1a"), 2)
+
+    def test_cant_add_iden_tests(self):
+        user1 = User(0, "LOGIN_USER1", "FN_USER1", "SN_USER1", "MN_USER1", [])
+        user2 = User(0, "LOGIN_USER2", "FN_USER2", "SN_USER2", "MN_USER2", [])
+        user1 = (self.core.db.addUser(user1))[1]
+        user2 = (self.core.db.addUser(user2))[1]
+        alg1 = Algorithm(0, "TITLE_ALG1", user1.user_id, "SOURCE_ALG1", [], 0)
+        alg2 = Algorithm(0, "TITLE_ALG2", user1.user_id, "SOURCE_ALG2", [], 0)
+        alg3 = Algorithm(0, "TITLE_ALG3", user2.user_id, "SOURCE_ALG3", [], 0)
+        alg1 = (self.core.db.addAlg(alg1))[1]
+        alg2 = (self.core.db.addAlg(alg2))[1]
+        alg3 = (self.core.db.addAlg(alg3))[1]
+        test1 = Test(0, alg1.title + "typo", "TITLE_TEST1", "SOURCE_TEST1")
+        test2 = Test(0, alg1.title, "TITLE_TEST2", "SOURCE_TEST2")
+        test3 = Test(0, alg1.title, "TITLE_TEST2", "SOURCE_TEST3")
+        status1, test1 = self.core.db.addTest(test1)
+        status2, test2 = self.core.db.addTest(test2)
+        status3, test3 = self.core.db.addTest(test3)
+        self.assertEqual(status1, DBStatus.s_data_issue)
+        self.assertEqual(status2, DBStatus.s_ok)
+        self.assertEqual(status3, DBStatus.s_data_issue)
+        self.assertEqual(test1.test_id, -100)
+        self.assertEqual(test2.test_id, 1)
+        self.assertEqual(test3.test_id, -100)
+        self.assertEqual(self.core.db._getNextID("1u1a"), 2)
+        self.assertEqual(self.core.db._getNextID("1u2a"), 1)
+        self.assertEqual(self.core.db._getNextID("2u1a"), 1)
+
+    def test_can_get_test_by_correct_ids(self):
+        user1 = User(0, "LOGIN_USER1", "FN_USER1", "SN_USER1", "MN_USER1", [])
+        user2 = User(0, "LOGIN_USER2", "FN_USER2", "SN_USER2", "MN_USER2", [])
+        user1 = (self.core.db.addUser(user1))[1]
+        user2 = (self.core.db.addUser(user2))[1]
+        alg1 = Algorithm(0, "TITLE_ALG1", user1.user_id, "SOURCE_ALG1", [], 0)
+        alg2 = Algorithm(0, "TITLE_ALG2", user1.user_id, "SOURCE_ALG2", [], 0)
+        alg3 = Algorithm(0, "TITLE_ALG3", user2.user_id, "SOURCE_ALG3", [], 0)
+        alg1 = (self.core.db.addAlg(alg1))[1]
+        alg2 = (self.core.db.addAlg(alg2))[1]
+        alg3 = (self.core.db.addAlg(alg3))[1]
+        test1 = Test(0, alg1.title, "TITLE_TEST1", "SOURCE_TEST1")
+        test2 = Test(0, alg1.title, "TITLE_TEST2", "SOURCE_TEST2")
+        test3 = Test(0, alg2.title, "TITLE_TEST3", "SOURCE_TEST3")
+        test4 = Test(0, alg3.title, "TITLE_TEST4", "SOURCE_TEST4")
+        test1 = (self.core.db.addTest(test1))[1]
+        test2 = (self.core.db.addTest(test2))[1]
+        test3 = (self.core.db.addTest(test3))[1]
+        test4 = (self.core.db.addTest(test4))[1]
+        status1, test5 = self.core.db.getTest(user1.user_id, alg1.alg_id, test1.test_id)
+        status2, test6 = self.core.db.getTest(user1.user_id, alg1.alg_id, test2.test_id)
+        status3, test7 = self.core.db.getTest(user1.user_id, alg2.alg_id, test3.test_id)
+        status4, test8 = self.core.db.getTest(user2.user_id, alg3.alg_id, test4.test_id)
+        self.assertEqual(status1, DBStatus.s_ok)
+        self.assertEqual(status2, DBStatus.s_ok)
+        self.assertEqual(status3, DBStatus.s_ok)
+        self.assertEqual(status4, DBStatus.s_ok)
+        self.assertEqual(test1, test5)
+        self.assertEqual(test2, test6)
+        self.assertEqual(test3, test7)
+        self.assertEqual(test4, test8)
+
+    def test_cant_get_test_by_incorrect_ids(self):
+        user1 = User(0, "LOGIN_USER1", "FN_USER1", "SN_USER1", "MN_USER1", [])
+        user2 = User(0, "LOGIN_USER2", "FN_USER2", "SN_USER2", "MN_USER2", [])
+        user1 = (self.core.db.addUser(user1))[1]
+        user2 = (self.core.db.addUser(user2))[1]
+        alg1 = Algorithm(0, "TITLE_ALG1", user1.user_id, "SOURCE_ALG1", [], 0)
+        alg2 = Algorithm(0, "TITLE_ALG2", user1.user_id, "SOURCE_ALG2", [], 0)
+        alg3 = Algorithm(0, "TITLE_ALG3", user2.user_id, "SOURCE_ALG3", [], 0)
+        alg1 = (self.core.db.addAlg(alg1))[1]
+        alg2 = (self.core.db.addAlg(alg2))[1]
+        alg3 = (self.core.db.addAlg(alg3))[1]
+        test1 = Test(0, alg1.title + "typo", "TITLE_TEST1", "SOURCE_TEST1")
+        test2 = Test(0, alg1.title + "typo", "TITLE_TEST2", "SOURCE_TEST2")
+        test3 = Test(0, alg2.title + "typo", "TITLE_TEST3", "SOURCE_TEST3")
+        test4 = Test(0, alg3.title + "typo", "TITLE_TEST4", "SOURCE_TEST4")
+        test1 = (self.core.db.addTest(test1))[1]
+        test2 = (self.core.db.addTest(test2))[1]
+        test3 = (self.core.db.addTest(test3))[1]
+        test4 = (self.core.db.addTest(test4))[1]
+        status1, test5 = self.core.db.getTest(user1.user_id, alg1.alg_id, test1.test_id)
+        status2, test6 = self.core.db.getTest(user1.user_id, alg1.alg_id, test2.test_id)
+        status3, test7 = self.core.db.getTest(user1.user_id, alg2.alg_id, test3.test_id)
+        status4, test8 = self.core.db.getTest(user2.user_id, alg3.alg_id, test4.test_id)
+        self.assertEqual(status1, DBStatus.s_data_issue)
+        self.assertEqual(status2, DBStatus.s_data_issue)
+        self.assertEqual(status3, DBStatus.s_data_issue)
+        self.assertEqual(status4, DBStatus.s_data_issue)
+        self.assertEqual(test5.test_id, -100)
+        self.assertEqual(test6.test_id, -100)
+        self.assertEqual(test7.test_id, -100)
+        self.assertEqual(test8.test_id, -100)
+
+    def test_can_get_all_alg_test_by_correct_ids(self):
+        user1 = User(0, "LOGIN_USER1", "FN_USER1", "SN_USER1", "MN_USER1", [])
+        user2 = User(0, "LOGIN_USER2", "FN_USER2", "SN_USER2", "MN_USER2", [])
+        user1 = (self.core.db.addUser(user1))[1]
+        user2 = (self.core.db.addUser(user2))[1]
+        alg1 = Algorithm(0, "TITLE_ALG1", user1.user_id, "SOURCE_ALG1", [], 0)
+        alg2 = Algorithm(0, "TITLE_ALG2", user1.user_id, "SOURCE_ALG2", [], 0)
+        alg3 = Algorithm(0, "TITLE_ALG3", user2.user_id, "SOURCE_ALG3", [], 0)
+        alg1 = (self.core.db.addAlg(alg1))[1]
+        alg2 = (self.core.db.addAlg(alg2))[1]
+        alg3 = (self.core.db.addAlg(alg3))[1]
+        test1 = Test(0, alg1.title, "TITLE_TEST1", "SOURCE_TEST1")
+        test2 = Test(0, alg1.title, "TITLE_TEST2", "SOURCE_TEST2")
+        test3 = Test(0, alg2.title, "TITLE_TEST3", "SOURCE_TEST3")
+        test4 = Test(0, alg3.title, "TITLE_TEST4", "SOURCE_TEST4")
+        test1 = (self.core.db.addTest(test1))[1]
+        test2 = (self.core.db.addTest(test2))[1]
+        test3 = (self.core.db.addTest(test3))[1]
+        test4 = (self.core.db.addTest(test4))[1]
+        status1, tests1 = self.core.db.getAllAlgTests(user1.user_id, alg1.alg_id)
+        status2, tests2 = self.core.db.getAllAlgTests(user1.user_id, alg2.alg_id)
+        status3, tests3 = self.core.db.getAllAlgTests(user2.user_id, alg3.alg_id)
+        self.assertEqual(status1, DBStatus.s_ok)
+        self.assertEqual(status2, DBStatus.s_ok)
+        self.assertEqual(status3, DBStatus.s_ok)
+        self.assertEqual(tests1[0], test1)
+        self.assertEqual(tests1[1], test2)
+        self.assertEqual(tests2[0], test3)
+        self.assertEqual(tests3[0], test4)
+
+    def test_cant_get_all_alg_test_by_incorrect_ids(self):
+        user1 = User(0, "LOGIN_USER1", "FN_USER1", "SN_USER1", "MN_USER1", [])
+        user2 = User(0, "LOGIN_USER2", "FN_USER2", "SN_USER2", "MN_USER2", [])
+        user1 = (self.core.db.addUser(user1))[1]
+        user2 = (self.core.db.addUser(user2))[1]
+        alg1 = Algorithm(0, "TITLE_ALG1", user1.user_id, "SOURCE_ALG1", [], 0)
+        alg2 = Algorithm(0, "TITLE_ALG2", user1.user_id, "SOURCE_ALG2", [], 0)
+        alg3 = Algorithm(0, "TITLE_ALG3", user2.user_id, "SOURCE_ALG3", [], 0)
+        alg1 = (self.core.db.addAlg(alg1))[1]
+        alg2 = (self.core.db.addAlg(alg2))[1]
+        alg3 = (self.core.db.addAlg(alg3))[1]
+        test1 = Test(0, alg1.title, "TITLE_TEST1", "SOURCE_TEST1")
+        test2 = Test(0, alg1.title, "TITLE_TEST2", "SOURCE_TEST2")
+        test3 = Test(0, alg2.title, "TITLE_TEST3", "SOURCE_TEST3")
+        test4 = Test(0, alg3.title, "TITLE_TEST4", "SOURCE_TEST4")
+        test1 = (self.core.db.addTest(test1))[1]
+        test2 = (self.core.db.addTest(test2))[1]
+        test3 = (self.core.db.addTest(test3))[1]
+        test4 = (self.core.db.addTest(test4))[1]
+        status1, tests1 = self.core.db.getAllAlgTests(user1.user_id + len("typo"), alg1.alg_id)
+        status2, tests2 = self.core.db.getAllAlgTests(user1.user_id, alg2.alg_id + len("typo"))
+        status3, tests3 = self.core.db.getAllAlgTests(user2.user_id + len("typo"), alg3.alg_id + len("typo"))
+        self.assertEqual(status1, DBStatus.s_data_issue)
+        self.assertEqual(status2, DBStatus.s_data_issue)
+        self.assertEqual(status3, DBStatus.s_data_issue)
+        self.assertEqual(tests1[0].test_id, -100)
+        self.assertEqual(tests2[0].test_id, -100)
+        self.assertEqual(tests3[0].test_id, -100)
+
