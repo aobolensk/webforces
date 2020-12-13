@@ -10,6 +10,17 @@
     ```
 
 ## How to run:
+
+### Server
 ```bash
 python manage.py runserver
+```
+
+### Web application
+Open URL that is displayed after starting server in your browser.
+
+### Desktop application
+```bash
+cd desktop_app
+python start_application.py
 ```

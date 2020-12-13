@@ -10,3 +10,9 @@ curl -X POST -d '{"username": "<username>","password": "<password>"}' -H 'Conten
 ```bash
 curl -H 'Authorization: Token <token>' http://127.0.0.1:8000/api/stats/
 ```
+
+## Where list of all available endpoints can be found?
+It can be found on `/api` page on website or alternately in `webforces/api/urls.py` file.
+```bash
+curl -H 'Authorization: Token <token>' http://127.0.0.1:8000/api/stats/
+```
