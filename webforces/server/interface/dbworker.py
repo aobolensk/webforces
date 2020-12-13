@@ -64,3 +64,7 @@ class DBWorker(abc.ABC):
     @abc.abstractmethod
     def getTask(self, task_id) -> Tuple[DBStatus, Task]:
         pass
+
+    @abc.abstractmethod
+    def getAllTasks(self) -> Tuple[DBStatus, List[Task]]:
+        pass

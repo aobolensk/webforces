@@ -1,6 +1,6 @@
 from django.test import TestCase
 from webforces.server.core import Core
-from webforces.server.structs import DBStatus, User, Algorithm, Test
+from webforces.server.structs import DBStatus, User, Algorithm, Test, Task
 
 
 class CoreTest(TestCase):
@@ -441,3 +441,78 @@ class DBTest(TestCase):
         self.assertEqual(tests2[0].test_id, -100)
         self.assertEqual(tests3[0].test_id, -100)
 
+    def test_can_add_task_with_correct_alg_title(self):
+        user = User(0, "LOGIN_USER", "FN_USER", "SN_USER", "MN_USER", [])
+        user = (self.core.db.addUser(user))[1]
+        alg = Algorithm(0, "TITLE_ALG", user.user_id, "SOURCE_ALG", [], 0)
+        alg = (self.core.db.addAlg(alg))[1]
+        task1 = Task(0, alg.title, 0, "MESSAGE_TASK1")
+        task2 = Task(0, alg.title, 0, "MESSAGE_TASK2")
+        status1, task1 = self.core.db.addTask(task1)
+        status2, task2 = self.core.db.addTask(task2)
+        self.assertEqual(status1, DBStatus.s_ok)
+        self.assertEqual(status2, DBStatus.s_ok)
+        self.assertEqual(task1.task_id, 1)
+        self.assertEqual(task2.task_id, 2)
+        self.assertEqual(self.core.db._getNextID("tasks"), 3)
+
+    def test_cant_add_task_with_incorrect_alg_title(self):
+        user = User(0, "LOGIN_USER", "FN_USER", "SN_USER", "MN_USER", [])
+        user = (self.core.db.addUser(user))[1]
+        alg = Algorithm(0, "TITLE_ALG", user.user_id, "SOURCE_ALG", [], 0)
+        alg = (self.core.db.addAlg(alg))[1]
+        task1 = Task(0, alg.title + "typo", 0, "MESSAGE_TASK1")
+        task2 = Task(0, alg.title + "typo", 0, "MESSAGE_TASK2")
+        status1, task1 = self.core.db.addTask(task1)
+        status2, task2 = self.core.db.addTask(task2)
+        self.assertEqual(status1, DBStatus.s_data_issue)
+        self.assertEqual(status2, DBStatus.s_data_issue)
+        self.assertEqual(task1.task_id, -100)
+        self.assertEqual(task2.task_id, -100)
+        self.assertEqual(self.core.db._getNextID("tasks"), 1)
+
+    def test_can_get_task_with_correct_id(self):
+        user = User(0, "LOGIN_USER", "FN_USER", "SN_USER", "MN_USER", [])
+        user = (self.core.db.addUser(user))[1]
+        alg = Algorithm(0, "TITLE_ALG", user.user_id, "SOURCE_ALG", [], 0)
+        alg = (self.core.db.addAlg(alg))[1]
+        task1 = Task(0, alg.title, 0, "MESSAGE_TASK1")
+        task2 = Task(0, alg.title, 0, "MESSAGE_TASK2")
+        task1 = (self.core.db.addTask(task1))[1]
+        task2 = (self.core.db.addTask(task2))[1]
+        status1, task3 = self.core.db.getTask(task1.task_id)
+        status2, task4 = self.core.db.getTask(task2.task_id)
+        self.assertEqual(status1, DBStatus.s_ok)
+        self.assertEqual(status2, DBStatus.s_ok)
+        self.assertEqual(task1, task3)
+        self.assertEqual(task2, task4)
+
+    def test_cant_get_task_with_incorrect_id(self):
+        user = User(0, "LOGIN_USER", "FN_USER", "SN_USER", "MN_USER", [])
+        user = (self.core.db.addUser(user))[1]
+        alg = Algorithm(0, "TITLE_ALG", user.user_id, "SOURCE_ALG", [], 0)
+        alg = (self.core.db.addAlg(alg))[1]
+        task1 = Task(0, alg.title, 0, "MESSAGE_TASK1")
+        task2 = Task(0, alg.title, 0, "MESSAGE_TASK2")
+        task1 = (self.core.db.addTask(task1))[1]
+        task2 = (self.core.db.addTask(task2))[1]
+        status1, task3 = self.core.db.getTask(task1.task_id + len("typo"))
+        status2, task4 = self.core.db.getTask(task2.task_id + len("typo"))
+        self.assertEqual(status1, DBStatus.s_data_issue)
+        self.assertEqual(status2, DBStatus.s_data_issue)
+        self.assertEqual(task3.task_id, -100)
+        self.assertEqual(task4.task_id, -100)
+
+    def test_can_get_all_task(self):
+        user = User(0, "LOGIN_USER", "FN_USER", "SN_USER", "MN_USER", [])
+        user = (self.core.db.addUser(user))[1]
+        alg = Algorithm(0, "TITLE_ALG", user.user_id, "SOURCE_ALG", [], 0)
+        alg = (self.core.db.addAlg(alg))[1]
+        task1 = Task(0, alg.title, 0, "MESSAGE_TASK1")
+        task2 = Task(0, alg.title, 0, "MESSAGE_TASK2")
+        task1 = (self.core.db.addTask(task1))[1]
+        task2 = (self.core.db.addTask(task2))[1]
+        status, tasks = self.core.db.getAllTasks()
+        self.assertEqual(status, DBStatus.s_ok)
+        self.assertEqual(tasks[0], task1)
+        self.assertEqual(tasks[1], task2)

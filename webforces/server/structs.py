@@ -70,6 +70,13 @@ class Task:
     @classmethod
     def fromDict(cls, dict):
         return cls(
-            dict["task_id"], dict["alg_id"],
+            dict["task_id"], dict["alg_title"],
             dict["status"], dict["message"]
         )
+
+
+class Stats:
+    num_of_users: int
+    num_of_algs: int
+    num_of_tests: int
+    num_of_task: int

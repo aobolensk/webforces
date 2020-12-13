@@ -295,7 +295,7 @@ class MongoDBWorker(dbworker.DBWorker):
         try:
             # check alg
             st = (self.getAlgByTitle(task.alg_title))[0]
-            if st != DBStatus.s_data_issue:
+            if st == DBStatus.s_data_issue:
                 logger.error("This algorithm does not exist")
                 return (DBStatus.s_data_issue, Task(-100, "error"))
             # add task
@@ -322,3 +322,16 @@ class MongoDBWorker(dbworker.DBWorker):
             return (DBStatus.s_connection_error, Task(-100, "error"))
         logger.debug("Task was found")
         return (DBStatus.s_ok, Task.fromDict(task_d))
+
+    def getAllTasks(self) -> Tuple[DBStatus, List[Task]]:
+        try:
+            tasks_collection = self.db["tasks"]
+            tasks_tmp = list(tasks_collection.find({}))
+            tasks = []
+            for task_d in tasks_tmp:
+                tasks.append(Task.fromDict(task_d))
+        except Exception as e:
+            logger.error(f"MongoDBWorker connection failed: {e}")
+            return (DBStatus.s_connection_error, [Task(-100, "error")])
+        logger.debug("Task was found")
+        return (DBStatus.s_ok, tasks)
