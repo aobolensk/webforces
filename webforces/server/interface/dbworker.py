@@ -22,6 +22,10 @@ class DBWorker(abc.ABC):
         pass
 
     @abc.abstractmethod
+    def updUser(self, user) -> DBStatus:
+        pass
+
+    @abc.abstractmethod
     def getUserByID(self, id) -> Tuple[DBStatus, User]:
         pass
 
