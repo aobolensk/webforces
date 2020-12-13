@@ -22,7 +22,11 @@ class UsersView(APIView):
     permission_classes = (IsAuthenticated,)
 
     def get(self, request):
-        users = []
+        core = Core()
+        status, users = core.db.getAllUsers()
+
+        if status != DBStatus.s_ok:
+            raise Exception("Could not get users")
 
         data = {
             "count": len(users),
