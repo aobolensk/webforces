@@ -20,6 +20,8 @@ class MongoDBWorker(dbworker.DBWorker):
             self.db_url = MONGODB_PROPERTIES['validation_url']
             self.db_name = "webforces_val"
         self.connect()
+        if not validation and "id" not in self.db.collection_names():
+            self._populateIds()
 
     def connect(self) -> int:
         if self.client is not None:
