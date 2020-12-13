@@ -13,6 +13,8 @@ class LoginWindow(QtWidgets.QMainWindow, LoginWindow.Ui_MainWindow):
         super().__init__()
         self.setupUi(self)
         self.pushButton.clicked.connect(self.logBtn)
+        self.loginEdit.returnPressed.connect(self.logBtn)
+        self.passwordEdit.returnPressed.connect(self.logBtn)
 
     def resizeEvent(self, event):
         self.authenticationField.move(self.centralwidget.width()/2 - self.authenticationField.width()/2,
