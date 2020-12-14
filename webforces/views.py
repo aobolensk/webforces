@@ -9,6 +9,7 @@ from django.views.generic.base import TemplateView
 
 from webforces.server.core import Core
 from webforces.server.structs import DBStatus
+from webforces.settings import GIT_REPO_LINK
 
 
 @dataclass
@@ -23,6 +24,7 @@ class MainPageView(TemplateView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context["base_index"] = self.get_indexes(self.request.user)
+        context["git_repo_link"] = GIT_REPO_LINK
         return context
 
     def get_indexes(self, user):
