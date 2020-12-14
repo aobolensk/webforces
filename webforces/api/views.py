@@ -126,6 +126,48 @@ class AlgsView(APIView):
         return Response(data)
 
 
+class AlgViewID(APIView):
+    permission_classes = (IsAuthenticated,)
+
+    def get(self, request, id):
+        core = Core()
+        status, alg = core.db.getAlgByID(id)
+
+        if status != DBStatus.s_ok:
+            raise Exception("Could not get algorithm")
+
+        data = {
+            "alg_id": alg.alg_id,
+            "title": alg.title,
+            "author_id": alg.author_id,
+            "source": alg.source,
+            "tests_id": alg.tests_id,
+            "lang_id": alg.lang_id,
+        }
+        return Response(data)
+
+
+class AlgViewTitle(APIView):
+    permission_classes = (IsAuthenticated,)
+
+    def get(self, request, title):
+        core = Core()
+        status, alg = core.db.getAlgByTitle(title)
+
+        if status != DBStatus.s_ok:
+            raise Exception("Could not get algorithm")
+
+        data = {
+            "alg_id": alg.alg_id,
+            "title": alg.title,
+            "author_id": alg.author_id,
+            "source": alg.source,
+            "tests_id": alg.tests_id,
+            "lang_id": alg.lang_id,
+        }
+        return Response(data)
+
+
 class GetTokenView(djoser.urls.authtoken.views.TokenCreateView):
     def _action(self, serializer):
         logger.debug(self.request.data)
