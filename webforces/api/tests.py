@@ -109,9 +109,7 @@ class RestApiSuperUserTest(TestCase):
                     "password": self.password
                 }).json()["auth_token"])
         }
-        response = self.client.post('/api/users/1/', {
-            "user_id": 2,
-            "login": "LOGIN_USER1",
+        response = self.client.post('/api/users/2/', {
             "first_name": "FN_USER2",
             "second_name": "SN_USER2",
             "middle_name": "MN_USER2",
