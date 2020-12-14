@@ -110,6 +110,22 @@ class UserViewLogin(APIView):
         return Response({"success": f"User {login} was successfully updated"})
 
 
+class AlgsView(APIView):
+    permission_classes = (IsAuthenticated,)
+
+    def get(self, request):
+        core = Core()
+        status, algs = core.db.getAllAlgs()
+
+        if status != DBStatus.s_ok:
+            raise Exception("Could not get algs")
+
+        data = {
+            "count": len(algs),
+        }
+        return Response(data)
+
+
 class GetTokenView(djoser.urls.authtoken.views.TokenCreateView):
     def _action(self, serializer):
         logger.debug(self.request.data)
