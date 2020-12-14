@@ -58,7 +58,7 @@ class UserViewID(APIView):
         core = Core()
         status, user_db = core.db.getUserByID(pk)
         if status != DBStatus.s_ok:
-            raise Http404("User does not exist")
+            return Response({"error": f"User does not exist: {status}"}, status=500)
 
         user = request.data.dict()
         user["user_id"] = int(pk)
@@ -95,7 +95,7 @@ class UserViewLogin(APIView):
         core = Core()
         status, user_db = core.db.getUserByLogin(login)
         if status != DBStatus.s_ok:
-            raise Http404("User does not exist")
+            return Response({"error": f"User does not exist: {status}"}, status=500)
 
         user = request.data.dict()
         user["user_id"] = user_db.user_id
