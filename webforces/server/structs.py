@@ -51,14 +51,14 @@ class Algorithm:
 @dataclass
 class Test:
     test_id: int
-    alg_title: str = ''
+    alg_id: int
     title: str = ''
     source: str = ''
 
     @classmethod
     def fromDict(cls, dict):
         return cls(
-            dict["test_id"], dict["alg_title"],
+            dict["test_id"], dict["alg_id"],
             dict["title"], dict["source"]
         )
 
@@ -66,14 +66,14 @@ class Test:
 @dataclass
 class Task:
     task_id: int
-    alg_title: str
+    alg_id: int
     status: int = 0
     message: str = ''
 
     @classmethod
     def fromDict(cls, dict):
         return cls(
-            dict["task_id"], dict["alg_title"],
+            dict["task_id"], dict["alg_id"],
             dict["status"], dict["message"]
         )
 

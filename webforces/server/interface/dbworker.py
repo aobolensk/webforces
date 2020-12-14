@@ -46,7 +46,7 @@ class DBWorker(abc.ABC):
         pass
 
     @abc.abstractmethod
-    def getAuthorAlgByAlgID(self, author_id, alg_id) -> Tuple[DBStatus, Algorithm]:
+    def getAlgByID(self, alg_id) -> Tuple[DBStatus, Algorithm]:
         pass
 
     @abc.abstractmethod
@@ -54,15 +54,19 @@ class DBWorker(abc.ABC):
         pass
 
     @abc.abstractmethod
+    def getAllAlgs(self) -> Tuple[DBStatus, List[Algorithm]]:
+        pass
+
+    @abc.abstractmethod
     def addTest(self, test) -> Tuple[DBStatus, Test]:
         pass
 
     @abc.abstractmethod
-    def getTest(self, author_id, alg_id, test_id) -> Tuple[DBStatus, Test]:
+    def getTest(self, alg_id, test_id) -> Tuple[DBStatus, Test]:
         pass
 
     @abc.abstractmethod
-    def getAllAlgTests(self, author_id, alg_id) -> Tuple[DBStatus, List[Test]]:
+    def getAllAlgTests(self, alg_id) -> Tuple[DBStatus, List[Test]]:
         pass
 
     @abc.abstractmethod
