@@ -147,21 +147,36 @@ class MainWindow(QtWidgets.QMainWindow, MainWindow.Ui_MainWindow):
         self.login = login
         self.setupUi(self)
         self.InfoField.setVisible(False)
+        self.algsField.setVisible(False)
         self.storeButton.clicked.connect(self.storeBtn)
         self.profileButton.clicked.connect(self.profileBtn)
         self.statisticButton.clicked.connect(self.statisticBtn)
         self.outButton.clicked.connect(self.outBtn)
 
+    def getAllAlgs(self):
+        response = requests.get('http://127.0.0.1:8000/api/users/' + self.login,
+                                headers={'Authorization': 'Token ' + self.token})
+        if response.status_code == 200:
+            profile = response.json()
+            self.id = profile['id']
+            self.UsernameEdit.setText(profile['login'])
+            self.FirstNameEdit.setText(profile["first_name"])
+            self.SecondNameEdit.setText(profile["second_name"])
+            self.MiddleNameEdit.setText(profile["middle_name"])
+
     def storeBtn(self):
-        print("storeBtn")
+        self.InfoField.setVisible(False)
+        self.algsField.setVisible(True)
 
     def profileBtn(self):
+        self.algsField.setVisible(False)
         self.InfoField.setVisible(False)
         self.InfoField = profile(self.ViewField, self.token, self.login)
         self.resizeEvent()
         self.InfoField.setVisible(True)
 
     def statisticBtn(self):
+        self.algsField.setVisible(False)
         self.InfoField.setVisible(False)
         self.InfoField = statistic(self.ViewField, self.token)
         self.resizeEvent()

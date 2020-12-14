@@ -8,6 +8,22 @@ from webforces.server.core import Core
 from webforces.server.structs import DBStatus, User
 
 
+class AlgsView(APIView):
+    permission_classes = (IsAuthenticated,)
+
+    def get(self, request):
+        core = Core()
+        status, users = core.db.getAllUsers()
+
+        if status != DBStatus.s_ok:
+            raise Exception("Could not get users")
+
+        data = {
+            "count": len(users),
+        }
+        return Response(data)
+
+
 class StatsView(APIView):
     permission_classes = (IsAuthenticated,)
 
