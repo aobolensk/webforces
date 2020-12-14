@@ -10,4 +10,6 @@ urlpatterns = [
     path('users/<int:pk>/', views.UserViewID.as_view()),
     path('users/<str:login>/', views.UserViewLogin.as_view()),
     path('algs/', views.AlgsView.as_view()),
+    path('algs/<int:id>/', views.AlgViewID.as_view()),
+    path('algs/<str:title>/', views.AlgViewTitle.as_view()),
 ]

@@ -1,7 +1,7 @@
 from django.contrib.auth.models import User as DjangoUser
 from django.test import Client, TestCase
 from webforces.server.core import Core
-from webforces.server.structs import User
+from webforces.server.structs import Algorithm, User
 
 
 class RestApiSuperUserTest(TestCase):
@@ -118,6 +118,51 @@ class RestApiSuperUserTest(TestCase):
         }, **header)
         self.assertEqual(response.status_code, 500)
 
+    def testGetAlgsEndpointEmpty(self):
+        response = self.client.get('/api/algs/')
+        self.assertEqual(response.status_code, 200)
+        stats = response.json()
+        self.assertEqual(stats["count"], 0)
+
+    def testGetAlgsEndpointWithAddedUser(self):
+        self.core.db.addUser(User(0, "LOGIN_USER1", "FN_USER1", "SN_USER1", "MN_USER1", []))
+        alg = Algorithm(0, "algorithm1", 1, 'print("Hello")', [], 0)
+        self.core.db.addAlg(alg)
+        response = self.client.get('/api/users/')
+        self.assertEqual(response.status_code, 200)
+        stats = response.json()
+        self.assertEqual(stats["count"], 1)
+
+    def testGetAlgByIdEndpoint(self):
+        user = User(0, "LOGIN_USER1", "FN_USER1", "SN_USER1", "MN_USER1", [])
+        self.core.db.addUser(user)
+        alg = Algorithm(0, "algorithm1", 1, 'print("Hello")', [], 0)
+        self.core.db.addAlg(alg)
+        response = self.client.get('/api/algs/1/')
+        self.assertEqual(response.status_code, 200)
+        stats = response.json()
+        self.assertEqual(stats["alg_id"], 1)
+        self.assertEqual(stats["title"], "algorithm1")
+        self.assertEqual(stats["author_id"], 1)
+        self.assertEqual(stats["source"], 'print("Hello")')
+        self.assertEqual(stats["tests_id"], [])
+        self.assertEqual(stats["lang_id"], 0)
+
+    def testGetAlgByTitleEndpoint(self):
+        user = User(0, "LOGIN_USER1", "FN_USER1", "SN_USER1", "MN_USER1", [])
+        self.core.db.addUser(user)
+        alg = Algorithm(0, "algorithm1", 1, 'print("Hello")', [], 0)
+        self.core.db.addAlg(alg)
+        response = self.client.get('/api/algs/algorithm1/')
+        self.assertEqual(response.status_code, 200)
+        stats = response.json()
+        self.assertEqual(stats["alg_id"], 1)
+        self.assertEqual(stats["title"], "algorithm1")
+        self.assertEqual(stats["author_id"], 1)
+        self.assertEqual(stats["source"], 'print("Hello")')
+        self.assertEqual(stats["tests_id"], [])
+        self.assertEqual(stats["lang_id"], 0)
+
 
 class RestApiRegularUserTest(RestApiSuperUserTest):
     """Test REST API with user permission level"""
@@ -192,3 +237,30 @@ class RestApiGuestTest(RestApiRegularUserTest):
     def testPostUserUpdateNonExistingUser(self):
         response = self.client.post('/api/get_token/').json()
         self.assertFalse("auth_token" in response)
+
+    def testGetAlgsEndpointEmpty(self):
+        response = self.client.get('/api/algs/')
+        self.assertEqual(response.status_code, 403)
+
+    def testGetAlgsEndpointWithAddedUser(self):
+        self.core.db.addUser(User(0, "LOGIN_USER1", "FN_USER1", "SN_USER1", "MN_USER1", []))
+        alg = Algorithm(0, "algorithm1", 1, 'print("Hello")', [], 0)
+        self.core.db.addAlg(alg)
+        response = self.client.get('/api/users/')
+        self.assertEqual(response.status_code, 403)
+
+    def testGetAlgByIdEndpoint(self):
+        user = User(0, "LOGIN_USER1", "FN_USER1", "SN_USER1", "MN_USER1", [])
+        self.core.db.addUser(user)
+        alg = Algorithm(0, "algorithm1", 1, 'print("Hello")', [], 0)
+        self.core.db.addAlg(alg)
+        response = self.client.get('/api/algs/1/')
+        self.assertEqual(response.status_code, 403)
+
+    def testGetAlgByTitleEndpoint(self):
+        user = User(0, "LOGIN_USER1", "FN_USER1", "SN_USER1", "MN_USER1", [])
+        self.core.db.addUser(user)
+        alg = Algorithm(0, "algorithm1", 1, 'print("Hello")', [], 0)
+        self.core.db.addAlg(alg)
+        response = self.client.get('/api/algs/algorithm1/')
+        self.assertEqual(response.status_code, 403)
