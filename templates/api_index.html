@@ -2,7 +2,18 @@
 
 {% block content %}
 <h2>API:</h2>
+<table width=100%>
 {% for entry in api_index %}
-    <p><a href="{{ entry.real_url }}">{{ entry.show_url }}</a>: {{ entry.description }}</p>
+    <tr>
+        <td width=5%>
+            {% for api_method in entry.methods %}
+                <code>{{ api_method }}</code>
+            {% endfor %}
+        </td>
+        <td>
+            <p><a href="{{ entry.real_url }}">{{ entry.show_url }}</a>: {{ entry.description }}</p>
+        </td>
+    </tr>
 {% endfor %}
+</table>
 {% endblock %}
