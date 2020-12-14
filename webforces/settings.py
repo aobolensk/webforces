@@ -103,6 +103,8 @@ MONGODB_PROPERTIES = {
     'validation_url': 'mongodb://localhost:27017/webforces_val',
 }
 
+GIT_REPO_LINK = "https://github.com/aobolensk/webforces"
+
 # Password validation
 # https://docs.djangoproject.com/en/3.0/ref/settings/#auth-password-validators
 
@@ -149,3 +151,7 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/3.0/howto/static-files/
 
 STATIC_URL = '/static/'
+
+STATICFILES_DIRS = [
+    os.path.join(BASE_DIR, "static")
+]
