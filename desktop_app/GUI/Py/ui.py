@@ -92,7 +92,7 @@ class statistic(QtWidgets.QGroupBox, Statistic.Ui_GroupBox):
             self.results.setText("")
             statistics = response.json()
             for key, value in statistics.items():
-                self.results.setText(self.results.text() + key + " : " + value + '\n')
+                self.results.setText(self.results.text() + str(key) + " : " + str(value) + '\n')
 
 
 class profile(QtWidgets.QGroupBox, Profile.Ui_GroupBox):
