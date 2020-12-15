@@ -1,6 +1,6 @@
 from dataclasses import dataclass, field
 from typing import List
-from enum import Enum
+from enum import Enum, IntEnum
 
 
 ERROR_ID = -100
@@ -10,6 +10,19 @@ class DBStatus(Enum):
     s_ok = 0
     s_connection_error = -1
     s_data_issue = -2
+
+
+class RunnerStatus(Enum):
+    s_unknown = 0
+    s_scheduled = 1
+    s_compiling = 2
+    s_running = 3
+    s_finished = 4
+
+
+class Language(IntEnum):
+    lang_unknown = 0
+    lang_cpp = 1
 
 
 @dataclass
