@@ -43,7 +43,7 @@ jobs:
     - name: Install requirements.txt
       run: python -m pip install -r requirements.txt
     - name: Run tests
-      run: pytest --html=report.html
+      run: pytest --html=report.html -m "not web_test"
     - name: Publish report
       uses: actions/upload-artifact@v2
       with:
