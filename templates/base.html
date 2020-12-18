@@ -1,5 +1,7 @@
+{% load static %}
 <html>
     <head>
+        <link rel="stylesheet" type="text/css" href="{% static 'style.css' %}">
     </head>
     <body>
         <div class="page_header">
@@ -22,6 +24,11 @@
         <div class="content">
             {% block content %}
             {% endblock %}
+        </div>
+        <div class="page_footer">
+            <div class="page_footer_content">
+                <p><a href="{{ git_repo_link }}">Webforces</a>, 2020</p>
+            </div>
         </div>
     </body>
 </html>
