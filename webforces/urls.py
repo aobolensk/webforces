@@ -27,4 +27,6 @@ urlpatterns = [
     path('api/', include('webforces.api.urls')),
     path('users/<str:user>/', views.UserView.as_view()),
     path('stats/', views.StatsView.as_view()),
+    path('store/', views.StoreView.as_view()),
+    path('add_alg/', views.AddAlg.as_view()),
 ]

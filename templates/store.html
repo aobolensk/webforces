@@ -1,0 +1,14 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<h1>Algorithms store</h1>
+
+<input type="button" onclick="location.href='/add_alg'" value="Add new algorithm" />
+
+{% for algorithm in algorithms_list %}
+    <div class='algorithm_shortview'>
+        <h2>{{ algorithm.name }}</h2>
+        <p>{{ algorithms.preview }}</p>
+    </div>
+{% endfor %}
+{% endblock %}

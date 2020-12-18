@@ -6,11 +6,13 @@ from django.contrib.auth.forms import AuthenticationForm, UserCreationForm
 from django.core.exceptions import PermissionDenied
 from django.shortcuts import redirect, render
 from django.views.generic.base import TemplateView
+from django.views.generic.edit import FormView
 from loguru import logger
 
 from webforces.server.core import Core
 from webforces.server.structs import DBStatus
 from webforces.settings import GIT_REPO_LINK
+from webforces.forms import NewAlgForm
 
 
 @dataclass
@@ -79,6 +81,36 @@ class StatsView(MainPageView):
             raise Exception("Could not get stats")
         context["stats"] = stats.__dict__
         return context
+
+
+class StoreView(MainPageView):
+    template_name = "store.html"
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        core = Core()
+        status, algorithms_list = core.db.getAllAlgs()
+        if status != DBStatus.s_ok:
+            context["algorithms_list"] = []
+        else:
+            context["algorithms_list"] = algorithms_list
+
+
+class AddAlg(FormView):
+    template_name = "add_alg.html"
+    form_class = NewAlgForm
+    success_url = '.'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        return context
+
+    def form_valid(self, form):
+        # This method is called when valid form data has been POSTed.
+        # It should return an HttpResponse.
+        form.checkForm()
+        # core = Core()
+        return super().form_valid(form)
 
 
 def sign_up(request):
