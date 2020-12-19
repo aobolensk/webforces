@@ -34,6 +34,7 @@ class User:
 class Algorithm:
     alg_id: int
     title: str = ''
+    description: str = ''
     author_id: int = 0
     source: str = ''
     tests_id: List[int] = field(default_factory=list)
@@ -42,7 +43,7 @@ class Algorithm:
     @classmethod
     def fromDict(cls, dict):
         return cls(
-            dict["alg_id"], dict["title"],
+            dict["alg_id"], dict["title"], dict["description"],
             dict["author_id"], dict["source"], dict["tests_id"],
             dict["lang_id"]
         )
