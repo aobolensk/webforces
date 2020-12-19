@@ -20,7 +20,9 @@ There are additional requirements to run Selenium based tests:
 1. Download [geckodriver](https://github.com/mozilla/geckodriver/releases)
 1. Unarchive it
 1. Make sure that geckodriver executable in PATH
+1. Create superuser using `python manage.py createsuperuser` with username "walrus" and password "wal"
 1. Make sure you have started the server using `python manage.py runserver` otherwise all Selenium based tests will fail
+1. Create user with username "chifir" and password "thispasswordistooshort" by application or web page
 
 ## How to use API?
 See [API FAQ](./api_faq.md)

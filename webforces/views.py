@@ -15,6 +15,7 @@ from webforces.settings import GIT_REPO_LINK
 
 @dataclass
 class Href:
+    id: str = ''
     url: str = ''
     description: str = ''
 
@@ -31,19 +32,19 @@ class MainPageView(TemplateView):
     def get_indexes(self, user):
         if user.is_superuser:
             return [
-                Href("/users/"+user.username+"/", "profile"),
-                Href("/stats/", "stats"),
-                Href("/api/", "api"),
-                Href("/accounts/logout/", "sign out"),
+                Href("UserProfileButton", "/users/"+user.username+"/", "profile"),
+                Href("StatisticsButton", "/stats/", "stats"),
+                Href("ApiButton", "/api/", "api"),
+                Href("SignOutButton", "/accounts/logout/", "sign out"),
             ]
         elif user.is_authenticated:
             return [
-                Href("/users/"+user.username+"/", "profile"),
-                Href("/accounts/logout/", "sign out"),
+                Href("UserProfileButton", "/users/"+user.username+"/", "profile"),
+                Href("SignOutButton", "/accounts/logout/", "sign out"),
             ]
         return [
-            Href("/accounts/login/", "sign in"),
-            Href("/accounts/sign_up/", "sign up"),
+            Href("SignInButton", "/accounts/login/", "sign in"),
+            Href("SignUpButton", "/accounts/sign_up/", "sign up"),
         ]
 
 
