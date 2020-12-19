@@ -10,7 +10,7 @@ from django.views.generic.edit import FormView
 from loguru import logger
 
 from webforces.server.core import Core
-from webforces.server.structs import DBStatus
+from webforces.server.structs import DBStatus, Algorithm
 from webforces.settings import GIT_REPO_LINK
 from webforces.forms import NewAlgForm
 
@@ -22,32 +22,35 @@ class Href:
     description: str = ''
 
 
+def get_indexes(user):
+    if user.is_superuser:
+        return [
+            Href("Store", "/store", "store"),
+            Href("UserProfileButton", "/users/"+user.username+"/", "profile"),
+            Href("StatisticsButton", "/stats/", "stats"),
+            Href("ApiButton", "/api/", "api"),
+            Href("SignOutButton", "/accounts/logout/", "sign out"),
+        ]
+    elif user.is_authenticated:
+        return [
+            Href("Store", "/store", "store"),
+            Href("UserProfileButton", "/users/"+user.username+"/", "profile"),
+            Href("SignOutButton", "/accounts/logout/", "sign out"),
+        ]
+    return [
+        Href("SignInButton", "/accounts/login/", "sign in"),
+        Href("SignUpButton", "/accounts/sign_up/", "sign up"),
+    ]
+
+
 class MainPageView(TemplateView):
     template_name = "main_page.html"
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context["base_index"] = self.get_indexes(self.request.user)
+        context["base_index"] = get_indexes(self.request.user)
         context["git_repo_link"] = GIT_REPO_LINK
         return context
-
-    def get_indexes(self, user):
-        if user.is_superuser:
-            return [
-                Href("UserProfileButton", "/users/"+user.username+"/", "profile"),
-                Href("StatisticsButton", "/stats/", "stats"),
-                Href("ApiButton", "/api/", "api"),
-                Href("SignOutButton", "/accounts/logout/", "sign out"),
-            ]
-        elif user.is_authenticated:
-            return [
-                Href("UserProfileButton", "/users/"+user.username+"/", "profile"),
-                Href("SignOutButton", "/accounts/logout/", "sign out"),
-            ]
-        return [
-            Href("SignInButton", "/accounts/login/", "sign in"),
-            Href("SignUpButton", "/accounts/sign_up/", "sign up"),
-        ]
 
 
 class UserView(MainPageView):
@@ -94,6 +97,7 @@ class StoreView(MainPageView):
             context["algorithms_list"] = []
         else:
             context["algorithms_list"] = algorithms_list
+        return context
 
 
 class AddAlg(FormView):
@@ -103,13 +107,30 @@ class AddAlg(FormView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
+        context["base_index"] = get_indexes(self.request.user)
+        context["git_repo_link"] = GIT_REPO_LINK
         return context
 
     def form_valid(self, form):
         # This method is called when valid form data has been POSTed.
         # It should return an HttpResponse.
-        form.checkForm()
-        # core = Core()
+        core = Core()
+        status, user = core.db.getUserByLogin(self.request.user.username)
+        if status != DBStatus.s_ok:
+            messages.error(self.request, "Internal error: can not find current user!")
+            return super().form_valid(form)
+
+        algorithm = Algorithm(0, title=form.cleaned_data['title'],
+                              description=form.cleaned_data['description'],
+                              author_id=user.user_id,
+                              source=form.cleaned_data['source'],
+                              )
+        status, alg = core.db.addAlg(algorithm)
+        if status == DBStatus.s_ok:
+            messages.info(self.request, 'New algorithm was successfully added!')
+        else:
+            messages.error(self.request, "Internal error: can not add algorithm to database!")
+
         return super().form_valid(form)
 
 

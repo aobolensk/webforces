@@ -7,8 +7,9 @@
 
 {% for algorithm in algorithms_list %}
     <div class='algorithm_shortview'>
-        <h2>{{ algorithm.name }}</h2>
-        <p>{{ algorithms.preview }}</p>
+        <h2>{{ algorithm.title }}</h2>
+        <p>{{ algorithm.description }}</p>
     </div>
 {% endfor %}
+
 {% endblock %}
