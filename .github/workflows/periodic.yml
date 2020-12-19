@@ -47,6 +47,10 @@ jobs:
         mongodb-version: 4.2
     - name: Install requirements.txt
       run: python -m pip install -r requirements.txt
+    - name: Migrate Django Auth DB
+      run: python manage.py migrate
+    - name: Create users
+      run: cat .github/workflows/create_users.py | python manage.py shell
     - name: Run server in the background
       run: nohup python manage.py runserver &
     - name: Run tests
