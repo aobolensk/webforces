@@ -1,9 +1,9 @@
 import pytest
 from selenium.webdriver.remote.webdriver import WebDriver
-from selenium.webdriver.common.alert import Alert
 
 
 base_url: str = "http://127.0.0.1:8000/"
+
 
 @pytest.fixture
 def firefox_options(firefox_options):
@@ -26,6 +26,7 @@ def test_can_autentificate_user(selenium: WebDriver):
 
     assert selenium.current_url == base_url
 
+
 @pytest.mark.web_test
 def test_cant_autentificate_wrong_user(selenium: WebDriver):
     selenium.get(base_url)
@@ -42,6 +43,7 @@ def test_cant_autentificate_wrong_user(selenium: WebDriver):
 
     assert error_elem.text == "Incorrect username or password"
 
+
 @pytest.mark.web_test
 def test_cant_registrate_with_empty_fields(selenium: WebDriver):
     selenium.get(base_url)
@@ -50,6 +52,7 @@ def test_cant_registrate_with_empty_fields(selenium: WebDriver):
     selenium.find_element_by_id("SubmitSignUpButton").click()
 
     assert selenium.current_url == base_url + "accounts/sign_up/"
+
 
 @pytest.mark.web_test
 def test_can_sign_out(selenium: WebDriver):
@@ -64,15 +67,16 @@ def test_can_sign_out(selenium: WebDriver):
     assert selenium.current_url == base_url
     selenium.find_element_by_id("SignInButton")
 
+
 @pytest.mark.web_test
 def test_can_access_password_reset_page(selenium: WebDriver):
     selenium.get(base_url)
     selenium.find_element_by_id("SignInButton").click()
 
-    #selenium.find_element_by_link_text("Forgot password?")
     selenium.find_element_by_id("ForgotPasswordLink").click()
 
     assert selenium.current_url == base_url + "accounts/password_reset/"
+
 
 @pytest.mark.skip(reason="store not implemented yet")
 @pytest.mark.web_test
@@ -87,8 +91,9 @@ def test_can_navigate_to_store(selenium: WebDriver):
 
     assert selenium.current_url == base_url + "store/"
 
+
 @pytest.mark.web_test
-def test_can_navigate_to_store(selenium: WebDriver):
+def test_can_navigate_to_user_profile(selenium: WebDriver):
     selenium.get(base_url)
     selenium.find_element_by_id("SignInButton").click()
     selenium.find_element_by_name("username").send_keys("chifir")
@@ -98,6 +103,7 @@ def test_can_navigate_to_store(selenium: WebDriver):
     selenium.find_element_by_id("UserProfileButton").click()
 
     assert selenium.current_url == base_url + "users/chifir/"
+
 
 @pytest.mark.web_test
 def test_can_see_statistic_by_superuser(selenium: WebDriver):
