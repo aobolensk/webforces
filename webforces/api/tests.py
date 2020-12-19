@@ -124,7 +124,7 @@ class RestApiSuperUserTest(TestCase):
 
     def testGetAlgsEndpointWithAddedUser(self):
         self.core.db.addUser(User(0, "LOGIN_USER1", "FN_USER1", "SN_USER1", "MN_USER1", []))
-        alg = Algorithm(0, "algorithm1", 1, 'print("Hello")', [], 0)
+        alg = Algorithm(0, "algorithm1", "description1", 1, 'print("Hello")', [], 0)
         self.core.db.addAlg(alg)
         response = self.client.get('/api/users/')
         self.assertEqual(response.status_code, 200)
@@ -134,7 +134,7 @@ class RestApiSuperUserTest(TestCase):
     def testGetAlgByIdEndpoint(self):
         user = User(0, "LOGIN_USER1", "FN_USER1", "SN_USER1", "MN_USER1", [])
         self.core.db.addUser(user)
-        alg = Algorithm(0, "algorithm1", 1, 'print("Hello")', [], 0)
+        alg = Algorithm(0, "algorithm1", "description1", 1, 'print("Hello")', [], 0)
         self.core.db.addAlg(alg)
         response = self.client.get('/api/algs/1/')
         self.assertEqual(response.status_code, 200)
@@ -149,7 +149,7 @@ class RestApiSuperUserTest(TestCase):
     def testGetAlgByTitleEndpoint(self):
         user = User(0, "LOGIN_USER1", "FN_USER1", "SN_USER1", "MN_USER1", [])
         self.core.db.addUser(user)
-        alg = Algorithm(0, "algorithm1", 1, 'print("Hello")', [], 0)
+        alg = Algorithm(0, "algorithm1", "description1", 1, 'print("Hello")', [], 0)
         self.core.db.addAlg(alg)
         response = self.client.get('/api/algs/algorithm1/')
         self.assertEqual(response.status_code, 200)
@@ -242,7 +242,7 @@ class RestApiGuestTest(RestApiRegularUserTest):
 
     def testGetAlgsEndpointWithAddedUser(self):
         self.core.db.addUser(User(0, "LOGIN_USER1", "FN_USER1", "SN_USER1", "MN_USER1", []))
-        alg = Algorithm(0, "algorithm1", 1, 'print("Hello")', [], 0)
+        alg = Algorithm(0, "algorithm1", "description1", 1, 'print("Hello")', [], 0)
         self.core.db.addAlg(alg)
         response = self.client.get('/api/users/')
         self.assertEqual(response.status_code, 403)
@@ -250,7 +250,7 @@ class RestApiGuestTest(RestApiRegularUserTest):
     def testGetAlgByIdEndpoint(self):
         user = User(0, "LOGIN_USER1", "FN_USER1", "SN_USER1", "MN_USER1", [])
         self.core.db.addUser(user)
-        alg = Algorithm(0, "algorithm1", 1, 'print("Hello")', [], 0)
+        alg = Algorithm(0, "algorithm1", "description1", 1, 'print("Hello")', [], 0)
         self.core.db.addAlg(alg)
         response = self.client.get('/api/algs/1/')
         self.assertEqual(response.status_code, 403)
@@ -258,7 +258,7 @@ class RestApiGuestTest(RestApiRegularUserTest):
     def testGetAlgByTitleEndpoint(self):
         user = User(0, "LOGIN_USER1", "FN_USER1", "SN_USER1", "MN_USER1", [])
         self.core.db.addUser(user)
-        alg = Algorithm(0, "algorithm1", 1, 'print("Hello")', [], 0)
+        alg = Algorithm(0, "algorithm1", "description1", 1, 'print("Hello")', [], 0)
         self.core.db.addAlg(alg)
         response = self.client.get('/api/algs/algorithm1/')
         self.assertEqual(response.status_code, 403)
