@@ -13,7 +13,7 @@
                     <td align="right">
                         <div class="buttons">
                             {% for entry in base_index %}
-                                <input type="button" onclick="location.href='{{ entry.url }}'" value="{{ entry.description }}" />
+                                <input type="button" id="{{ entry.id }}" onclick="location.href='{{ entry.url }}'" value="{{ entry.description }}" />
                             {% endfor %}
                         </div>
                     </td>

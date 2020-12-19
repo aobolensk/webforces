@@ -17,12 +17,12 @@
     </tr>
   </table>
   {% for message in messages %}
-    <p style="color: red">{{ message }}</p>
+    <p name="MessageParagraph" style="color: red">{{ message }}</p>
   {% endfor %}
-  <input type="submit" value="login" />
+  <input type="submit" id="SubmitLoginButton" value="login" />
   <input type="hidden" name="next" value="{{ next }}" />
 </form>
 
-<p><a href="{% url 'password_reset' %}">Forgot password?</a></p>
+<p><a id="ForgotPasswordLink" href="{% url 'password_reset' %}">Forgot password?</a></p>
 
 {% endblock %}
