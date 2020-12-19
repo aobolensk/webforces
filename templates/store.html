@@ -4,12 +4,16 @@
 <h1>Algorithms store</h1>
 
 <input type="button" onclick="location.href='/add_alg'" value="Add new algorithm" />
+<br><br>
 
 {% for algorithm in algorithms_list %}
     <div class='algorithm_shortview'>
         <h2>{{ algorithm.title }}</h2>
         <p>{{ algorithm.description }}</p>
+        <p>cost: {{ algorithm.cost }}</p>
+        <a href="{{ algorithm.href }}">{{ algorithm.href_name }}</a>
     </div>
+    <br>
 {% endfor %}
 
 {% endblock %}
