@@ -312,6 +312,29 @@ class MongoDBWorker(dbworker.DBWorker):
         logger.debug("Algorithms was found")
         return (DBStatus.s_ok, algs)
 
+    def getAllAvailableAlgs(self, user_id) -> Tuple[DBStatus, List[Algorithm], List[bool]]:
+        try:
+            st, user = self.getUserByID(user_id)
+            if st == DBStatus.s_data_issue:
+                logger.error("This user does not exist")
+                return (DBStatus.s_data_issue, [Algorithm(ERROR_ID)], [ERROR_ID])
+            algs_collection = self.db["algs"]
+            algs_tmp = list(algs_collection.find({}))
+            algs = []
+            availables = []
+            for alg_d in algs_tmp:
+                flag = False
+                alg = Algorithm.fromDict(alg_d)
+                algs.append(alg)
+                if (alg.cost == 0) or (alg.alg_id in user.algs_id) or (alg.alg_id in user.bound_ids):
+                    flag = True
+                availables.append(flag)
+        except Exception as e:
+            logger.error(f"MongoDBWorker connection failed: {e}")
+            return (DBStatus.s_connection_error, [Algorithm(ERROR_ID)], [ERROR_ID])
+        logger.debug("Algorithms was found")
+        return (DBStatus.s_ok, algs, availables)
+
     def addTest(self, test) -> Tuple[DBStatus, Test]:
         try:
             # check alg
