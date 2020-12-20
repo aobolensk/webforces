@@ -100,7 +100,7 @@ class StoreView(MainPageView):
 class AddAlg(FormView):
     template_name = "add_alg.html"
     form_class = NewAlgForm
-    success_url = '.'
+    success_url = '/store'
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
