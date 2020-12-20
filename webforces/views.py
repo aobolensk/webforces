@@ -12,7 +12,7 @@ from loguru import logger
 from webforces.server.core import Core
 from webforces.server.structs import DBStatus, Algorithm
 from webforces.settings import GIT_REPO_LINK
-from webforces.forms import NewAlgForm
+from webforces.forms import NewAlgForm, UpdUserForm
 
 
 @dataclass
@@ -63,10 +63,57 @@ class UserView(MainPageView):
         core = Core()
         status, user = core.db.getUserByLogin(self.kwargs['user'])
         if status != DBStatus.s_ok:
-            context["fullname"] = ""
+            context["full_name"] = ""
         else:
-            context["fullname"] = f"{user.first_name} {user.middle_name} {user.second_name}"
+            context["full_name"] = f"{user.first_name} {user.middle_name} {user.second_name}"
         return context
+
+
+class UpdUserView(FormView):
+    template_name = "user_update.html"
+    form_class = UpdUserForm
+
+    def get_success_url(self) -> str:
+        return f'/users/{self.request.user.username}'
+
+    def get_initial(self):
+        core = Core()
+
+        status, user = core.db.getUserByLogin(self.request.user.username)
+        if status != DBStatus.s_ok:
+            return {}
+
+        initial = {
+            "first_name": user.first_name,
+            "second_name": user.second_name,
+            "middle_name": user.middle_name,
+        }
+        return initial
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["base_index"] = get_indexes(self.request.user)
+        context["git_repo_link"] = GIT_REPO_LINK
+        return context
+
+    def form_valid(self, form):
+        core = Core()
+        status, user = core.db.getUserByLogin(self.request.user.username)
+        if status != DBStatus.s_ok:
+            messages.error(self.request, "Internal error: can not find current user!")
+            return super().form_valid(form)
+
+        user.first_name = form.cleaned_data["first_name"]
+        user.second_name = form.cleaned_data["second_name"]
+        user.middle_name = form.cleaned_data["middle_name"]
+
+        status = core.db.updFNUser(user)
+        if status == DBStatus.s_ok:
+            messages.info(self.request, 'User profile was successfully updated!')
+        else:
+            messages.error(self.request, "Internal error: can not update user profile!")
+
+        return super().form_valid(form)
 
 
 class StatsView(MainPageView):
