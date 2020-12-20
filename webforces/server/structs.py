@@ -69,13 +69,14 @@ class Test:
     test_id: int
     alg_id: int
     title: str = ''
-    source: str = ''
+    input: str = ''
+    output: str = ''
 
     @classmethod
     def fromDict(cls, dict):
         return cls(
-            dict["test_id"], dict["alg_id"],
-            dict["title"], dict["source"]
+            dict["test_id"], dict["alg_id"], dict["title"],
+            dict["input"], dict["output"],
         )
 
 

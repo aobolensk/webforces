@@ -202,7 +202,8 @@ class TestsViewByAlgID(APIView):
                 "test_id": test.test_id,
                 "alg_id": test.alg_id,
                 "title": test.title,
-                "source": test.source,
+                "input": test.input,
+                "output": test.output,
             }
 
         return Response(data)
@@ -229,7 +230,8 @@ class TestsViewByAlgTitle(APIView):
                 "test_id": test.test_id,
                 "alg_id": test.alg_id,
                 "title": test.title,
-                "source": test.source,
+                "input": test.input,
+                "output": test.output,
             }
 
         return Response(data)
