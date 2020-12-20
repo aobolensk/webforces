@@ -128,12 +128,13 @@ class AlgsView(APIView):
         core = Core()
         data = request.data
         status, user_db = core.db.getUserByLogin(data['login'])
-
+        print(data["cost"], type(data['cost']))
         alg = Algorithm(title=data['title'],
                         description=data['desc'],
                         author_id=user_db.user_id,
                         source=data['code'],
                         lang_id=data['langId'],
+                        cost=int(data['cost']),
                         alg_id=0)
 
         status, alg = core.db.addAlg(alg)
@@ -160,6 +161,7 @@ class AlgViewID(APIView):
             "source": alg.source,
             "tests_id": alg.tests_id,
             "lang_id": alg.lang_id,
+            "cost": alg.cost
         }
         return Response(data)
 
@@ -181,7 +183,8 @@ class AlgViewTitle(APIView):
             "source": alg.source,
             "tests_id": alg.tests_id,
             "lang_id": alg.lang_id,
-            "description": alg.description
+            "description": alg.description,
+            "cost": alg.cost
         }
         return Response(data)
 
@@ -235,6 +238,47 @@ class TestsViewByAlgTitle(APIView):
             }
 
         return Response(data)
+
+
+class BuyViewByAlgTitle(APIView):
+    permission_classes = (IsAuthenticated,)
+
+    def get(self, request, title):
+        core = Core()
+        status, alg = core.db.getAlgByTitle(title)
+
+        if status != DBStatus.s_ok:
+            raise Exception("Could not get algorithm")
+
+        status, author = core.db.getUserByID(alg.author_id)
+        data = {
+            "name": alg.title,
+            "author": author.login,
+            "price": alg.cost
+        }
+        return Response(data)
+
+    def post(self, request, title):
+        core = Core()
+
+        status, alg = core.db.getAlgByTitle(title)
+
+        if status != DBStatus.s_ok:
+            raise Exception("Could not get algorithm")
+
+        user_id = request.data.dict()['user_id']
+        print(user_id)
+        status, user = core.db.getUserByID(int(user_id))
+        if status != DBStatus.s_ok:
+            raise Http404("User does not exist")
+
+        user.bound_ids.append(alg.alg_id)
+
+        status = core.db.bindAlg(user)
+        if status != DBStatus.s_ok:
+            return Response("You are the author of this algorithm", status=500)
+
+        return Response({"success": f"User {user_id} successfully bought algo {title}"})
 
 
 class GetTokenView(djoser.urls.authtoken.views.TokenCreateView):
