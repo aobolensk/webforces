@@ -133,14 +133,35 @@ class StatsView(MainPageView):
         return context
 
 
+@dataclass
+class Algorithms_preview:
+    alg_id: int = 0
+    title: str = ''
+    description: str = ''
+    cost: int = 0
+    available: bool = False
+
+
 class StoreView(MainPageView):
     template_name = "store.html"
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         core = Core()
-        status, algorithms_list = core.db.getAllAlgs()
-        context["algorithms_list"] = algorithms_list
+        status, user = core.db.getUserByLogin(self.request.user.username)
+        if status != DBStatus.s_ok:
+            messages.error(self.request, "Internal error: can not find current user!")
+            return context
+        status, algorithms_list, availables = core.db.getAllAvailableAlgs(user.user_id)
+        if status != DBStatus.s_ok:
+            messages.error(self.request, "Internal error: can not get list of algorithms!")
+            return context
+        algorithms_preview_list = []
+        for i in range(len(algorithms_list)):
+            algorithms_preview_list.append(Algorithms_preview(algorithms_list[i].alg_id,
+                                           algorithms_list[i].title, algorithms_list[i].description,
+                                           algorithms_list[i].cost, availables[i]))
+        context["algorithms_preview_list"] = algorithms_preview_list
         return context
 
 
