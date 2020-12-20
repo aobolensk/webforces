@@ -6,13 +6,17 @@
 <input type="button" onclick="location.href='/add_alg'" value="Add new algorithm" />
 <br><br>
 
-{% for algorithm in algorithms_list %}
+{% for algorithm in algorithms_preview_list %}
     <div class='algorithm_shortview'>
         <h2>{{ algorithm.title }}</h2>
         <p>{{ algorithm.description }}</p>
         <p>cost: {{ algorithm.cost }}</p>
-        <!--to do: check for unavailable algorithms-->
-        <a href="algs/{{ algorithm.alg_id }}">Go to algorithm page</a>
+
+        {% if algorithm.available == True %}
+            <a href="algs/{{ algorithm.alg_id }}">Go to algorithm page</a>
+        {% else %}
+            <a href="buy/{{ algorithm.alg_id }}">Buy algorithm</a>
+        {% endif %}
     </div>
     <br>
 {% endfor %}
