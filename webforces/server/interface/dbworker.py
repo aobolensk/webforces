@@ -62,6 +62,10 @@ class DBWorker(abc.ABC):
         pass
 
     @abc.abstractmethod
+    def getAllBoundAlgs(self, author_id) -> Tuple[DBStatus, List[Algorithm]]:
+        pass
+
+    @abc.abstractmethod
     def getAllAlgs(self) -> Tuple[DBStatus, List[Algorithm]]:
         pass
 
