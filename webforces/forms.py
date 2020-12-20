@@ -13,6 +13,13 @@ class NewAlgForm(forms.Form):
                              widget=forms.Textarea(attrs={'id': 'NewAlgSource', 'placeholder': 'Source'}))
 
 
+class NewTestForm(forms.Form):
+    title = forms.CharField(
+        label="", widget=forms.TextInput(attrs={'id': 'Title', 'placeholder': 'Title'}))
+    source = forms.CharField(
+        label="", widget=forms.Textarea(attrs={'id': 'NewTestSource', 'placeholder': 'Source'}))
+
+
 class UpdUserForm(forms.Form):
     first_name = forms.CharField(
         label="", widget=forms.TextInput(attrs={'id': 'FirstName', 'placeholder': 'First name'}))
