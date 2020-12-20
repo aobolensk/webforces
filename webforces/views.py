@@ -12,7 +12,7 @@ from loguru import logger
 from webforces.server.core import Core
 from webforces.server.structs import DBStatus, Algorithm
 from webforces.settings import GIT_REPO_LINK
-from webforces.forms import NewAlgForm, UpdUserForm
+from webforces.forms import BuyAlgForm, NewAlgForm, UpdUserForm
 
 
 @dataclass
@@ -152,7 +152,7 @@ class StoreView(MainPageView):
         if status != DBStatus.s_ok:
             messages.error(self.request, "Internal error: can not find current user!")
             return context
-        status, algorithms_list, availables = core.db.getAllAvailableAlgs(user.user_id)
+        status, algorithms_list, available_list = core.db.getAllAvailableAlgs(user.user_id)
         if status != DBStatus.s_ok:
             messages.error(self.request, "Internal error: can not get list of algorithms!")
             return context
@@ -160,12 +160,12 @@ class StoreView(MainPageView):
         for i in range(len(algorithms_list)):
             algorithms_preview_list.append(Algorithms_preview(algorithms_list[i].alg_id,
                                            algorithms_list[i].title, algorithms_list[i].description,
-                                           algorithms_list[i].cost, availables[i]))
+                                           algorithms_list[i].cost, available_list[i]))
         context["algorithms_preview_list"] = algorithms_preview_list
         return context
 
 
-class AddAlg(FormView):
+class AddAlgView(FormView):
     template_name = "add_alg.html"
     form_class = NewAlgForm
     success_url = '/store'
@@ -197,6 +197,37 @@ class AddAlg(FormView):
         else:
             messages.error(self.request, "Internal error: can not add algorithm to database!")
 
+        return super().form_valid(form)
+
+
+class AlgView(MainPageView):
+    template_name = "alg_page.html"
+
+
+class BuyAlgView(FormView):
+    template_name = "buy_alg.html"
+    form_class = BuyAlgForm
+    success_url = '/store'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["base_index"] = get_indexes(self.request.user)
+        context["git_repo_link"] = GIT_REPO_LINK
+        return context
+
+    def form_valid(self, form):
+        core = Core()
+        status, user = core.db.getUserByLogin(self.request.user.username)
+        if status != DBStatus.s_ok:
+            messages.error(self.request, "Internal error: can not find current user!")
+            return super().form_valid(form)
+
+        user.bound_ids.append(self.kwargs["alg_id"])
+        status = core.db.bindAlg(user)
+        if status == DBStatus.s_ok:
+            messages.info(self.request, 'New algorithm was successfully added!')
+        else:
+            messages.error(self.request, 'Internal error: can not buy algorithm!')
         return super().form_valid(form)
 
 

@@ -13,9 +13,9 @@
         <p>cost: {{ algorithm.cost }}</p>
 
         {% if algorithm.available == True %}
-            <a href="algs/{{ algorithm.alg_id }}">Go to algorithm page</a>
+            <a href="{{ algorithm.alg_id }}/alg">Go to algorithm page</a>
         {% else %}
-            <a href="buy/{{ algorithm.alg_id }}">Buy algorithm</a>
+            <a href="{{ algorithm.alg_id }}/buy">Buy algorithm</a>
         {% endif %}
     </div>
     <br>

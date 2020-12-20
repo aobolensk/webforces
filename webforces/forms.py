@@ -20,3 +20,7 @@ class UpdUserForm(forms.Form):
         label="", widget=forms.TextInput(attrs={'id': 'MiddleName', 'placeholder': 'Middle name'}))
     second_name = forms.CharField(
         label="", widget=forms.TextInput(attrs={'id': 'SecondName', 'placeholder': 'Second name'}))
+
+
+class BuyAlgForm(forms.Form):
+    pass
