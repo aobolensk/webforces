@@ -238,7 +238,9 @@ class AddTestView(FormView):
 
     def form_valid(self, form):
         core = Core()
-        test = Test(0, self.kwargs['alg_id'], form.cleaned_data['title'], form.cleaned_data['source'])
+        test = Test(
+            0, self.kwargs['alg_id'], form.cleaned_data['title'],
+            form.cleaned_data['input'], form.cleaned_data['output'])
         status = core.db.addTest(test)
         if status != DBStatus.s_ok:
             messages.error(self.request, "Internal error: can not add test!")
