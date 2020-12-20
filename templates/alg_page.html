@@ -1,5 +1,22 @@
 {% extends 'base.html' %}
 
 {% block content %}
-<h1>ALGORITHM PAGE!</h1>
+<h1>{{ title }}</h1>
+<input type="button" onclick="location.href='/store/{{ alg_id }}/add_test'" value="Add test" />
+<br><br>
+
+<h2>Description:</h2>
+<pre>{{ description }}</pre>
+
+<h2>Source code:</h2>
+<pre>{{ source_code }}</pre>
+
+<h2>Found {{ tests|length }} tests</h2>
+
+{% for test in tests %}
+    <h3>{{ test.test_id }}: {{ test.title }}</h3>
+    <pre>{{ test.source }}</pre>
+    <br><br>
+{% endfor %}
+
 {% endblock %}

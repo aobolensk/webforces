@@ -10,9 +10,9 @@ from django.views.generic.edit import FormView
 from loguru import logger
 
 from webforces.server.core import Core
-from webforces.server.structs import DBStatus, Algorithm
+from webforces.server.structs import DBStatus, Algorithm, Language, Test
 from webforces.settings import GIT_REPO_LINK
-from webforces.forms import BuyAlgForm, NewAlgForm, UpdUserForm
+from webforces.forms import BuyAlgForm, NewAlgForm, NewTestForm, UpdUserForm
 
 
 @dataclass
@@ -189,7 +189,8 @@ class AddAlgView(FormView):
                               description=form.cleaned_data['description'],
                               author_id=user.user_id,
                               source=form.cleaned_data['source'],
-                              cost=form.cleaned_data['cost']
+                              cost=form.cleaned_data['cost'],
+                              lang_id=Language.lang_cpp,  # WA
                               )
         status, alg = core.db.addAlg(algorithm)
         if status == DBStatus.s_ok:
@@ -202,6 +203,49 @@ class AddAlgView(FormView):
 
 class AlgView(MainPageView):
     template_name = "alg_page.html"
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["alg_id"] = self.kwargs["alg_id"]
+        core = Core()
+        status, alg = core.db.getAlgByID(context["alg_id"])
+        if status != DBStatus.s_ok:
+            messages.error(self.request, "Internal error: can not find current user!")
+            return context
+        status, tests = core.db.getAllAlgTests(context["alg_id"])
+        for i in range(len(tests)):
+            tests[i] = tests[i].__dict__
+        context["title"] = alg.title
+        context["description"] = alg.description
+        context["source_code"] = alg.source
+        context["tests"] = tests
+        return context
+
+
+class AddTestView(FormView):
+    template_name = "add_test.html"
+    form_class = NewTestForm
+
+    def get_success_url(self) -> str:
+        return f"/store/{self.kwargs['alg_id']}/alg/"
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["base_index"] = get_indexes(self.request.user)
+        context["git_repo_link"] = GIT_REPO_LINK
+        context["alg_id"] = self.kwargs['alg_id']
+        return context
+
+    def form_valid(self, form):
+        core = Core()
+        test = Test(0, self.kwargs['alg_id'], form.cleaned_data['title'], form.cleaned_data['source'])
+        status = core.db.addTest(test)
+        if status != DBStatus.s_ok:
+            messages.error(self.request, "Internal error: can not add test!")
+            return super().form_valid(form)
+
+        messages.info(self.request, 'New test was successfully added!')
+        return super().form_valid(form)
 
 
 class BuyAlgView(FormView):
