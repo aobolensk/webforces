@@ -2,7 +2,7 @@ from typing import Tuple, List
 
 import pymongo
 from loguru import logger
-from webforces.server.structs import DBStatus, ERROR_ID, User, Algorithm, Test, Task, Stats
+from webforces.server.structs import DBStatus, ERROR_ID, Language, User, Algorithm, Test, Task, Stats
 from webforces.server.interface import dbworker
 from webforces.settings import MONGODB_PROPERTIES
 
@@ -209,6 +209,10 @@ class MongoDBWorker(dbworker.DBWorker):
             # check cost
             if alg.cost < 0:
                 logger.error("The cost must be positive")
+                return (DBStatus.s_data_issue, Algorithm(ERROR_ID))
+            # check lang
+            if alg.lang_id == Language.lang_unknown:
+                logger.error("Unknown language")
                 return (DBStatus.s_data_issue, Algorithm(ERROR_ID))
             # add alg
             algs_collection = self.db["algs"]
