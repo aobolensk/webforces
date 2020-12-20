@@ -97,23 +97,7 @@ class StoreView(MainPageView):
         status, user = core.db.getUserByLogin(self.request.user.username)
         if status != DBStatus.s_ok:
             messages.error(self.request, "Internal error: can not find current user!")
-            return context
-
-        # status, algs_user = core.db.getAllAuthorAlgs(user.user_id)
-        # if status != DBStatus.s_ok:
-        #     messages.error(self.request, "Internal error: can not find algorithms forcurrent user!")
-        #     return context
-
-        if status != DBStatus.s_ok:
-            context["algorithms_list"] = []
         else:
-            # for i in range(len(algorithms_list)):
-            #     if algorithms_list[i].cost == 0 or algorithms_list[i].author_id == user.user_id:
-            #         algorithms_list.href = "algs/"+str(algorithms_list[i].alg_id)
-            #         algorithms_list.href_name = "go to algorithm page"
-            #     else:
-            #         algorithms_list.href = "buy/"+str(algorithms_list[i].alg_id)
-            #         algorithms_list.href_name = "buy algorithm"
             context["algorithms_list"] = algorithms_list
         return context
 

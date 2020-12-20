@@ -11,7 +11,8 @@
         <h2>{{ algorithm.title }}</h2>
         <p>{{ algorithm.description }}</p>
         <p>cost: {{ algorithm.cost }}</p>
-        <a href="{{ algorithm.href }}">{{ algorithm.href_name }}</a>
+        <!--to do: check for unavailable algorithms-->
+        <a href="algs/{{ algorithm.alg_id }}">Go to algorithm page</a>
     </div>
     <br>
 {% endfor %}
