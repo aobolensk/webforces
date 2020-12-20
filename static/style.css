@@ -40,3 +40,11 @@
     height:45%;
     resize:vertical;
 }
+
+#BuyButton {
+    width: 70%;
+    height: 50%;
+    font-size: 150px;
+    margin-left: 15%;
+    margin-right: 15%;
+}
