@@ -102,7 +102,7 @@ class MongoDBWorker(dbworker.DBWorker):
         logger.debug("New user was successfully added")
         return (DBStatus.s_ok, user)
 
-    def updUser(self, user) -> DBStatus:
+    def updFNUser(self, user) -> DBStatus:
         try:
             users_collection = self.db["users"]
             user_d = users_collection.find_one({"user_id": user.user_id})
@@ -113,7 +113,38 @@ class MongoDBWorker(dbworker.DBWorker):
                 {"user_id": user.user_id}, {"$set": {
                     "first_name": user.first_name,
                     "second_name": user.second_name,
-                    "middle_name": user.middle_name,
+                    "middle_name": user.middle_name
+                }})
+            if user_d is None:
+                logger.error("User update failed")
+                return DBStatus.s_data_issue
+        except Exception as e:
+            logger.error(f"MongoDBWorker connection failed: {e}")
+            return DBStatus.s_connection_error
+        logger.debug("User was updated")
+        return DBStatus.s_ok
+
+    def bindAlg(self, user) -> DBStatus:
+        try:
+            # check user
+            users_collection = self.db["users"]
+            user_d = users_collection.find_one({"user_id": user.user_id})
+            if user_d is None:
+                logger.error("This user does not exist")
+                return DBStatus.s_data_issue
+            # check alg
+            for alg_id in user.bound_ids:
+                st, _ = self.getAlgByID(alg_id)
+                if st == DBStatus.s_data_issue:
+                    logger.error("This algorithm does not exist")
+                    return st
+                if alg_id in user.algs_id:
+                    logger.error("This user is the author of this algorithm")
+                    return DBStatus.s_data_issue
+            # update bound list
+            user_d = users_collection.update_one(
+                {"user_id": user.user_id}, {"$set": {
+                    "bound_ids": user.bound_ids
                 }})
             if user_d is None:
                 logger.error("User update failed")
@@ -175,6 +206,10 @@ class MongoDBWorker(dbworker.DBWorker):
             if st != DBStatus.s_data_issue:
                 logger.error("This algorithm already exists")
                 return (DBStatus.s_data_issue, Algorithm(ERROR_ID))
+            # check cost
+            if alg.cost < 0:
+                logger.error("The cost must be positive")
+                return (DBStatus.s_data_issue, Algorithm(ERROR_ID))
             # add alg
             algs_collection = self.db["algs"]
             alg.alg_id = self._getNextID("algs")
@@ -195,6 +230,29 @@ class MongoDBWorker(dbworker.DBWorker):
             return (DBStatus.s_connection_error, Algorithm(ERROR_ID))
         logger.debug("New algorithm was successfully added")
         return (DBStatus.s_ok, alg)
+
+    def updAlgCost(self, alg) -> DBStatus:
+        try:
+            algs_collection = self.db["algs"]
+            alg_d = algs_collection.find_one({"alg_id": alg.alg_id})
+            if alg_d is None:
+                logger.error("This algorithm does not exist")
+                return DBStatus.s_data_issue
+            if alg.cost < 0:
+                logger.error("The cost must be positive")
+                return DBStatus.s_data_issue
+            alg_d = algs_collection.update_one(
+                {"alg_id": alg.alg_id}, {"$set": {
+                    "cost": alg.cost
+                }})
+            if alg_d is None:
+                logger.error("Algorithm update failed")
+                return DBStatus.s_data_issue
+        except Exception as e:
+            logger.error(f"MongoDBWorker connection failed: {e}")
+            return DBStatus.s_connection_error
+        logger.debug("Algorithm was updated")
+        return DBStatus.s_ok
 
     def getAlgByTitle(self, title) -> Tuple[DBStatus, Algorithm]:
         try:

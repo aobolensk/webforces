@@ -22,7 +22,11 @@ class DBWorker(abc.ABC):
         pass
 
     @abc.abstractmethod
-    def updUser(self, user) -> DBStatus:
+    def updFNUser(self, user) -> DBStatus:
+        pass
+
+    @abc.abstractmethod
+    def bindAlg(self, user) -> DBStatus:
         pass
 
     @abc.abstractmethod
@@ -39,6 +43,10 @@ class DBWorker(abc.ABC):
 
     @abc.abstractmethod
     def addAlg(self, alg) -> Tuple[DBStatus, Algorithm]:
+        pass
+
+    @abc.abstractmethod
+    def updAlgCost(self, alg) -> DBStatus:
         pass
 
     @abc.abstractmethod

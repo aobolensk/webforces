@@ -20,13 +20,14 @@ class User:
     second_name: str = ''
     middle_name: str = ''
     algs_id: List[int] = field(default_factory=list)
+    bound_ids: List[int] = field(default_factory=list)
 
     @classmethod
     def fromDict(cls, dict):
         return cls(
             dict["user_id"], dict["login"],
             dict["first_name"], dict["second_name"], dict["middle_name"],
-            dict["algs_id"]
+            dict["algs_id"], dict["bound_ids"]
         )
 
 

@@ -21,8 +21,8 @@ class DBTest(TestCase):
         self.core.db.dropAll()
 
     def test_can_add_diff_users(self):
-        user1 = User(0, "LOGIN_USER1", "FN_USER1", "SN_USER1", "MN_USER1", [])
-        user2 = User(0, "LOGIN_USER2", "FN_USER2", "SN_USER2", "MN_USER2", [])
+        user1 = User(0, "LOGIN_USER1", "FN_USER1", "SN_USER1", "MN_USER1", [], [])
+        user2 = User(0, "LOGIN_USER2", "FN_USER2", "SN_USER2", "MN_USER2", [], [])
         status1, user1 = self.core.db.addUser(user1)
         status2, user2 = self.core.db.addUser(user2)
         self.assertEqual(status1, DBStatus.s_ok)
@@ -31,8 +31,8 @@ class DBTest(TestCase):
         self.assertEqual(user2.user_id, 2)
 
     def test_cant_add_iden_users(self):
-        user1 = User(0, "LOGIN_USER1", "FN_USER1", "SN_USER1", "MN_USER1", [])
-        user2 = User(0, "LOGIN_USER1", "FN_USER2", "SN_USER2", "MN_USER2", [])
+        user1 = User(0, "LOGIN_USER1", "FN_USER1", "SN_USER1", "MN_USER1", [], [])
+        user2 = User(0, "LOGIN_USER1", "FN_USER2", "SN_USER2", "MN_USER2", [], [])
         status1, user1 = self.core.db.addUser(user1)
         status2, user2 = self.core.db.addUser(user2)
         self.assertEqual(status1, DBStatus.s_ok)
@@ -41,36 +41,36 @@ class DBTest(TestCase):
         self.assertEqual(user2.user_id, ERROR_ID)
 
     def test_can_get_user_by_correct_user_id(self):
-        user1 = User(0, "LOGIN_USER1", "FN_USER1", "SN_USER1", "MN_USER1", [])
+        user1 = User(0, "LOGIN_USER1", "FN_USER1", "SN_USER1", "MN_USER1", [], [])
         _, user1 = (self.core.db.addUser(user1))
         status, user2 = self.core.db.getUserByID(user1.user_id)
         self.assertEqual(status, DBStatus.s_ok)
         self.assertEqual(user1, user2)
 
     def test_cant_get_user_by_incorrect_user_id(self):
-        user1 = User(0, "LOGIN_USER1", "FN_USER1", "SN_USER1", "MN_USER1", [])
+        user1 = User(0, "LOGIN_USER1", "FN_USER1", "SN_USER1", "MN_USER1", [], [])
         _, user1 = (self.core.db.addUser(user1))
         status, user2 = self.core.db.getUserByID(user1.user_id + len("typo"))
         self.assertEqual(status, DBStatus.s_data_issue)
         self.assertEqual(user2.user_id, ERROR_ID)
 
     def test_can_get_user_by_correct_login(self):
-        user1 = User(0, "LOGIN_USER1", "FN_USER1", "SN_USER1", "MN_USER1", [])
+        user1 = User(0, "LOGIN_USER1", "FN_USER1", "SN_USER1", "MN_USER1", [], [])
         _, user1 = (self.core.db.addUser(user1))
         status, user2 = self.core.db.getUserByLogin(user1.login)
         self.assertEqual(status, DBStatus.s_ok)
         self.assertEqual(user1, user2)
 
     def test_cant_get_user_by_incorrect_login(self):
-        user1 = User(0, "LOGIN_USER1", "FN_USER1", "SN_USER1", "MN_USER1", [])
+        user1 = User(0, "LOGIN_USER1", "FN_USER1", "SN_USER1", "MN_USER1", [], [])
         _, user1 = (self.core.db.addUser(user1))
         status, user2 = self.core.db.getUserByLogin(user1.login + "typo")
         self.assertEqual(status, DBStatus.s_data_issue)
         self.assertEqual(user2.user_id, ERROR_ID)
 
     def test_can_get_all_users(self):
-        user1 = User(0, "LOGIN_USER1", "FN_USER1", "SN_USER1", "MN_USER1", [])
-        user2 = User(0, "LOGIN_USER2", "FN_USER2", "SN_USER2", "MN_USER2", [])
+        user1 = User(0, "LOGIN_USER1", "FN_USER1", "SN_USER1", "MN_USER1", [], [])
+        user2 = User(0, "LOGIN_USER2", "FN_USER2", "SN_USER2", "MN_USER2", [], [])
         _, user1 = (self.core.db.addUser(user1))
         _, user2 = (self.core.db.addUser(user2))
         status, users = self.core.db.getAllUsers()
@@ -79,8 +79,8 @@ class DBTest(TestCase):
         self.assertEqual(users[1], user2)
 
     def test_can_add_diff_algs(self):
-        user1 = User(0, "LOGIN_USER1", "FN_USER1", "SN_USER1", "MN_USER1", [])
-        user2 = User(0, "LOGIN_USER2", "FN_USER2", "SN_USER2", "MN_USER2", [])
+        user1 = User(0, "LOGIN_USER1", "FN_USER1", "SN_USER1", "MN_USER1", [], [])
+        user2 = User(0, "LOGIN_USER2", "FN_USER2", "SN_USER2", "MN_USER2", [], [])
         _, user1 = (self.core.db.addUser(user1))
         _, user2 = (self.core.db.addUser(user2))
         alg1 = Algorithm(0, "TITLE_ALG1", "DESCR_ALG1", user1.user_id, "SOURCE_ALG1", [], 0, 0)
@@ -100,7 +100,7 @@ class DBTest(TestCase):
         self.assertEqual(self.core.db._getNextID("3a"), 1)
 
     def test_cant_add_alg_with_incorrect_user_id(self):
-        user = User(0, "LOGIN_USER", "FN_USER", "SN_USER", "MN_USER", [])
+        user = User(0, "LOGIN_USER", "FN_USER", "SN_USER", "MN_USER", [], [])
         _, user = (self.core.db.addUser(user))
         alg = Algorithm(0, "TITLE_ALG", "DESCR_ALG", user.user_id + len("typo"), "SOURCE_ALG", [], 0, 0)
         status, alg = self.core.db.addAlg(alg)
@@ -109,8 +109,8 @@ class DBTest(TestCase):
         self.assertEqual(self.core.db._getNextID("1a"), DBStatus.s_data_issue)
 
     def test_cant_add_iden_algs(self):
-        user1 = User(0, "LOGIN_USER1", "FN_USER1", "SN_USER1", "MN_USER1", [])
-        user2 = User(0, "LOGIN_USER2", "FN_USER2", "SN_USER2", "MN_USER2", [])
+        user1 = User(0, "LOGIN_USER1", "FN_USER1", "SN_USER1", "MN_USER1", [], [])
+        user2 = User(0, "LOGIN_USER2", "FN_USER2", "SN_USER2", "MN_USER2", [], [])
         _, user1 = (self.core.db.addUser(user1))
         _, user2 = (self.core.db.addUser(user2))
         alg1 = Algorithm(0, "TITLE_ALG1", "DESCR_ALG1", user1.user_id, "SOURCE_ALG1", [], 0, 0)
@@ -130,7 +130,7 @@ class DBTest(TestCase):
         self.assertEqual(self.core.db._getNextID("3a"), DBStatus.s_data_issue)
 
     def test_can_get_alg_by_correct_title(self):
-        user = User(0, "LOGIN_USER", "FN_USER", "SN_USER", "MN_USER", [])
+        user = User(0, "LOGIN_USER", "FN_USER", "SN_USER", "MN_USER", [], [])
         _, user = (self.core.db.addUser(user))
         alg1 = Algorithm(0, "TITLE_ALG1", "DESCR_ALG1", user.user_id, "SOURCE_ALG1", [], 0, 0)
         _, alg1 = (self.core.db.addAlg(alg1))
@@ -139,7 +139,7 @@ class DBTest(TestCase):
         self.assertEqual(alg1, alg2)
 
     def test_cant_get_algs_by_incorrect_title(self):
-        user = User(0, "LOGIN_USER", "FN_USER", "SN_USER", "MN_USER", [])
+        user = User(0, "LOGIN_USER", "FN_USER", "SN_USER", "MN_USER", [], [])
         _, user = (self.core.db.addUser(user))
         alg1 = Algorithm(0, "TITLE_ALG1", "DESCR_ALG1", user.user_id, "SOURCE_ALG1", [], 0, 0)
         _, alg1 = (self.core.db.addAlg(alg1))
@@ -148,8 +148,8 @@ class DBTest(TestCase):
         self.assertEqual(alg2.alg_id, ERROR_ID)
 
     def test_can_get_alg_by_correct_alg_id(self):
-        user1 = User(0, "LOGIN_USER1", "FN_USER1", "SN_USER1", "MN_USER1", [])
-        user2 = User(0, "LOGIN_USER2", "FN_USER2", "SN_USER2", "MN_USER2", [])
+        user1 = User(0, "LOGIN_USER1", "FN_USER1", "SN_USER1", "MN_USER1", [], [])
+        user2 = User(0, "LOGIN_USER2", "FN_USER2", "SN_USER2", "MN_USER2", [], [])
         _, user1 = (self.core.db.addUser(user1))
         _, user2 = (self.core.db.addUser(user2))
         alg1 = Algorithm(0, "TITLE_ALG1", "DESCR_ALG1", user1.user_id, "SOURCE_ALG1", [], 0, 0)
@@ -169,8 +169,8 @@ class DBTest(TestCase):
         self.assertEqual(alg3, alg6)
 
     def test_cant_get_alg_by_incorrect_alg_id(self):
-        user1 = User(0, "LOGIN_USER1", "FN_USER1", "SN_USER1", "MN_USER1", [])
-        user2 = User(0, "LOGIN_USER2", "FN_USER2", "SN_USER2", "MN_USER2", [])
+        user1 = User(0, "LOGIN_USER1", "FN_USER1", "SN_USER1", "MN_USER1", [], [])
+        user2 = User(0, "LOGIN_USER2", "FN_USER2", "SN_USER2", "MN_USER2", [], [])
         _, user1 = (self.core.db.addUser(user1))
         _, user2 = (self.core.db.addUser(user2))
         alg1 = Algorithm(0, "TITLE_ALG1", "DESCR_ALG1", user1.user_id, "SOURCE_ALG1", [], 0, 0)
@@ -190,8 +190,8 @@ class DBTest(TestCase):
         self.assertEqual(alg6.alg_id, ERROR_ID)
 
     def test_can_get_all_author_algs_by_correct_user_id(self):
-        user1 = User(0, "LOGIN_USER1", "FN_USER1", "SN_USER1", "MN_USER1", [])
-        user2 = User(0, "LOGIN_USER2", "FN_USER2", "SN_USER2", "MN_USER2", [])
+        user1 = User(0, "LOGIN_USER1", "FN_USER1", "SN_USER1", "MN_USER1", [], [])
+        user2 = User(0, "LOGIN_USER2", "FN_USER2", "SN_USER2", "MN_USER2", [], [])
         _, user1 = (self.core.db.addUser(user1))
         _, user2 = (self.core.db.addUser(user2))
         alg1 = Algorithm(0, "TITLE_ALG1", "DESCR_ALG1", user1.user_id, "SOURCE_ALG1", [], 0, 0)
@@ -209,8 +209,8 @@ class DBTest(TestCase):
         self.assertEqual(alg3, algs2[0])
 
     def test_cant_get_all_author_algs_by_incorrect_user_id(self):
-        user1 = User(0, "LOGIN_USER1", "FN_USER1", "SN_USER1", "MN_USER1", [])
-        user2 = User(0, "LOGIN_USER2", "FN_USER2", "SN_USER2", "MN_USER2", [])
+        user1 = User(0, "LOGIN_USER1", "FN_USER1", "SN_USER1", "MN_USER1", [], [])
+        user2 = User(0, "LOGIN_USER2", "FN_USER2", "SN_USER2", "MN_USER2", [], [])
         _, user1 = (self.core.db.addUser(user1))
         _, user2 = (self.core.db.addUser(user2))
         alg1 = Algorithm(0, "TITLE_ALG1", "DESCR_ALG1", user1.user_id, "SOURCE_ALG1", [], 0, 0)
@@ -227,8 +227,8 @@ class DBTest(TestCase):
         self.assertEqual(algs2[0].alg_id, ERROR_ID)
 
     def test_can_add_diff_tests(self):
-        user1 = User(0, "LOGIN_USER1", "FN_USER1", "SN_USER1", "MN_USER1", [])
-        user2 = User(0, "LOGIN_USER2", "FN_USER2", "SN_USER2", "MN_USER2", [])
+        user1 = User(0, "LOGIN_USER1", "FN_USER1", "SN_USER1", "MN_USER1", [], [])
+        user2 = User(0, "LOGIN_USER2", "FN_USER2", "SN_USER2", "MN_USER2", [], [])
         _, user1 = (self.core.db.addUser(user1))
         _, user2 = (self.core.db.addUser(user2))
         alg1 = Algorithm(0, "TITLE_ALG1", "DESCR_ALG1", user1.user_id, "SOURCE_ALG1", [], 0, 0)
@@ -258,7 +258,7 @@ class DBTest(TestCase):
         self.assertEqual(self.core.db._getNextID("3a"), 2)
 
     def test_cant_add_iden_tests(self):
-        user = User(0, "LOGIN_USER", "FN_USER", "SN_USER", "MN_USER", [])
+        user = User(0, "LOGIN_USER", "FN_USER", "SN_USER", "MN_USER", [], [])
         _, user = (self.core.db.addUser(user))
         alg = Algorithm(0, "TITLE_ALG", "DESCR_ALG", user.user_id, "SOURCE_ALG", [], 0, 0)
         _, alg = (self.core.db.addAlg(alg))
@@ -273,7 +273,7 @@ class DBTest(TestCase):
         self.assertEqual(self.core.db._getNextID("1a"), 2)
 
     def test_cant_add_test_with_incorrect_alg_id(self):
-        user = User(0, "LOGIN_USER", "FN_USER", "SN_USER", "MN_USER", [])
+        user = User(0, "LOGIN_USER", "FN_USER", "SN_USER", "MN_USER", [], [])
         _, user = (self.core.db.addUser(user))
         alg = Algorithm(0, "TITLE_ALG", "DESCR_ALG", user.user_id, "SOURCE_ALG", [], 0, 0)
         _, alg = (self.core.db.addAlg(alg))
@@ -284,8 +284,8 @@ class DBTest(TestCase):
         self.assertEqual(self.core.db._getNextID("1a"), 1)
 
     def test_can_get_test_by_correct_ids(self):
-        user1 = User(0, "LOGIN_USER1", "FN_USER1", "SN_USER1", "MN_USER1", [])
-        user2 = User(0, "LOGIN_USER2", "FN_USER2", "SN_USER2", "MN_USER2", [])
+        user1 = User(0, "LOGIN_USER1", "FN_USER1", "SN_USER1", "MN_USER1", [], [])
+        user2 = User(0, "LOGIN_USER2", "FN_USER2", "SN_USER2", "MN_USER2", [], [])
         _, user1 = (self.core.db.addUser(user1))
         _, user2 = (self.core.db.addUser(user2))
         alg1 = Algorithm(0, "TITLE_ALG1", "DESCR_ALG1", user1.user_id, "SOURCE_ALG1", [], 0, 0)
@@ -316,8 +316,8 @@ class DBTest(TestCase):
         self.assertEqual(test4, test8)
 
     def test_cant_get_test_by_incorrect_ids(self):
-        user1 = User(0, "LOGIN_USER1", "FN_USER1", "SN_USER1", "MN_USER1", [])
-        user2 = User(0, "LOGIN_USER2", "FN_USER2", "SN_USER2", "MN_USER2", [])
+        user1 = User(0, "LOGIN_USER1", "FN_USER1", "SN_USER1", "MN_USER1", [], [])
+        user2 = User(0, "LOGIN_USER2", "FN_USER2", "SN_USER2", "MN_USER2", [], [])
         _, user1 = (self.core.db.addUser(user1))
         _, user2 = (self.core.db.addUser(user2))
         alg1 = Algorithm(0, "TITLE_ALG1", "DESCR_ALG1", user1.user_id, "SOURCE_ALG1", [], 0, 0)
@@ -348,8 +348,8 @@ class DBTest(TestCase):
         self.assertEqual(test8.test_id, ERROR_ID)
 
     def test_can_get_all_alg_tests_by_correct_id(self):
-        user1 = User(0, "LOGIN_USER1", "FN_USER1", "SN_USER1", "MN_USER1", [])
-        user2 = User(0, "LOGIN_USER2", "FN_USER2", "SN_USER2", "MN_USER2", [])
+        user1 = User(0, "LOGIN_USER1", "FN_USER1", "SN_USER1", "MN_USER1", [], [])
+        user2 = User(0, "LOGIN_USER2", "FN_USER2", "SN_USER2", "MN_USER2", [], [])
         _, user1 = (self.core.db.addUser(user1))
         _, user2 = (self.core.db.addUser(user2))
         alg1 = Algorithm(0, "TITLE_ALG1", "DESCR_ALG1", user1.user_id, "SOURCE_ALG1", [], 0, 0)
@@ -378,8 +378,8 @@ class DBTest(TestCase):
         self.assertEqual(tests3[0], test4)
 
     def test_cant_get_all_alg_tests_by_incorrect_id(self):
-        user1 = User(0, "LOGIN_USER1", "FN_USER1", "SN_USER1", "MN_USER1", [])
-        user2 = User(0, "LOGIN_USER2", "FN_USER2", "SN_USER2", "MN_USER2", [])
+        user1 = User(0, "LOGIN_USER1", "FN_USER1", "SN_USER1", "MN_USER1", [], [])
+        user2 = User(0, "LOGIN_USER2", "FN_USER2", "SN_USER2", "MN_USER2", [], [])
         _, user1 = (self.core.db.addUser(user1))
         _, user2 = (self.core.db.addUser(user2))
         alg1 = Algorithm(0, "TITLE_ALG1", "DESCR_ALG1", user1.user_id, "SOURCE_ALG1", [], 0, 0)
@@ -407,7 +407,7 @@ class DBTest(TestCase):
         self.assertEqual(tests3[0].test_id, ERROR_ID)
 
     def test_can_add_task_with_correct_alg_id(self):
-        user = User(0, "LOGIN_USER", "FN_USER", "SN_USER", "MN_USER", [])
+        user = User(0, "LOGIN_USER", "FN_USER", "SN_USER", "MN_USER", [], [])
         _, user = (self.core.db.addUser(user))
         alg = Algorithm(0, "TITLE_ALG", "DESCR_ALG", user.user_id, "SOURCE_ALG", [], 0, 0)
         _, alg = (self.core.db.addAlg(alg))
@@ -422,7 +422,7 @@ class DBTest(TestCase):
         self.assertEqual(self.core.db._getNextID("tasks"), 3)
 
     def test_cant_add_task_with_incorrect_alg_id(self):
-        user = User(0, "LOGIN_USER", "FN_USER", "SN_USER", "MN_USER", [])
+        user = User(0, "LOGIN_USER", "FN_USER", "SN_USER", "MN_USER", [], [])
         _, user = (self.core.db.addUser(user))
         alg = Algorithm(0, "TITLE_ALG", "DESCR_ALG", user.user_id, "SOURCE_ALG", [], 0, 0)
         _, alg = (self.core.db.addAlg(alg))
@@ -437,7 +437,7 @@ class DBTest(TestCase):
         self.assertEqual(self.core.db._getNextID("tasks"), 1)
 
     def test_can_get_task_with_correct_id(self):
-        user = User(0, "LOGIN_USER", "FN_USER", "SN_USER", "MN_USER", [])
+        user = User(0, "LOGIN_USER", "FN_USER", "SN_USER", "MN_USER", [], [])
         _, user = (self.core.db.addUser(user))
         alg = Algorithm(0, "TITLE_ALG", "DESCR_ALG", user.user_id, "SOURCE_ALG", [], 0, 0)
         _, alg = (self.core.db.addAlg(alg))
@@ -453,7 +453,7 @@ class DBTest(TestCase):
         self.assertEqual(task2, task4)
 
     def test_cant_get_task_with_incorrect_id(self):
-        user = User(0, "LOGIN_USER", "FN_USER", "SN_USER", "MN_USER", [])
+        user = User(0, "LOGIN_USER", "FN_USER", "SN_USER", "MN_USER", [], [])
         _, user = (self.core.db.addUser(user))
         alg = Algorithm(0, "TITLE_ALG", "DESCR_ALG", user.user_id, "SOURCE_ALG", [], 0, 0)
         _, alg = (self.core.db.addAlg(alg))
@@ -469,7 +469,7 @@ class DBTest(TestCase):
         self.assertEqual(task4.task_id, ERROR_ID)
 
     def test_can_get_all_task(self):
-        user = User(0, "LOGIN_USER", "FN_USER", "SN_USER", "MN_USER", [])
+        user = User(0, "LOGIN_USER", "FN_USER", "SN_USER", "MN_USER", [], [])
         _, user = (self.core.db.addUser(user))
         alg = Algorithm(0, "TITLE_ALG", "DESCR_ALG", user.user_id, "SOURCE_ALG", [], 0, 0)
         _, alg = (self.core.db.addAlg(alg))
@@ -483,8 +483,8 @@ class DBTest(TestCase):
         self.assertEqual(tasks[1], task2)
 
     def test_can_get_stats(self):
-        user1 = User(0, "LOGIN_USER1", "FN_USER1", "SN_USER1", "MN_USER1", [])
-        user2 = User(0, "LOGIN_USER2", "FN_USER2", "SN_USER2", "MN_USER2", [])
+        user1 = User(0, "LOGIN_USER1", "FN_USER1", "SN_USER1", "MN_USER1", [], [])
+        user2 = User(0, "LOGIN_USER2", "FN_USER2", "SN_USER2", "MN_USER2", [], [])
         _, user1 = (self.core.db.addUser(user1))
         _, user2 = (self.core.db.addUser(user2))
         alg1 = Algorithm(0, "TITLE_ALG1", "DESCR_ALG1", user1.user_id, "SOURCE_ALG1", [], 0, 0)
@@ -514,24 +514,124 @@ class DBTest(TestCase):
         self.assertEqual(stats.num_of_tests, 4)
         self.assertEqual(stats.num_of_tasks, 3)
 
-    def test_can_update_user(self):
-        user1 = User(0, "LOGIN_USER1", "FN_USER1", "SN_USER1", "MN_USER1", [])
-        _, user1 = self.core.db.addUser(user1)
-        self.assertEqual(user1.first_name, "FN_USER1")
-        self.assertEqual(user1.second_name, "SN_USER1")
-        self.assertEqual(user1.middle_name, "MN_USER1")
-        user1.first_name = "FN_USER2"
-        user1.second_name = "SN_USER2"
-        user1.middle_name = "MN_USER2"
-        status = self.core.db.updUser(user1)
+    def test_can_update_user_full_name(self):
+        user = User(0, "LOGIN_USER", "FN_USER", "SN_USER", "MN_USER", [], [])
+        _, user = self.core.db.addUser(user)
+        self.assertEqual(user.first_name, "FN_USER")
+        self.assertEqual(user.second_name, "SN_USER")
+        self.assertEqual(user.middle_name, "MN_USER")
+        user.first_name = "FN_USER_UPD"
+        user.second_name = "SN_USER_UPD"
+        user.middle_name = "MN_USER_UPD"
+        status = self.core.db.updFNUser(user)
         self.assertEqual(status, DBStatus.s_ok)
-        status, user2 = self.core.db.getUserByID(user1.user_id)
+        status, user2 = self.core.db.getUserByID(user.user_id)
         self.assertEqual(status, DBStatus.s_ok)
-        self.assertEqual(user2.first_name, "FN_USER2")
-        self.assertEqual(user2.second_name, "SN_USER2")
-        self.assertEqual(user2.middle_name, "MN_USER2")
+        self.assertEqual(user2.first_name, "FN_USER_UPD")
+        self.assertEqual(user2.second_name, "SN_USER_UPD")
+        self.assertEqual(user2.middle_name, "MN_USER_UPD")
 
     def test_cant_update_nonexisting_user(self):
-        user1 = User(0, "LOGIN_USER1", "FN_USER1", "SN_USER1", "MN_USER1", [])
-        status = self.core.db.updUser(user1)
+        user = User(0, "LOGIN_USER", "FN_USER", "SN_USER", "MN_USER", [], [])
+        status = self.core.db.updFNUser(user)
+        self.assertEqual(status, DBStatus.s_data_issue)
+        status, _ = self.core.db.getUserByID(user.user_id)
+        self.assertEqual(status, DBStatus.s_data_issue)
+
+    def test_can_update_user_bound_algs(self):
+        user1 = User(0, "LOGIN_USER1", "FN_USER1", "SN_USER1", "MN_USER1", [], [])
+        user2 = User(0, "LOGIN_USER2", "FN_USER2", "SN_USER2", "MN_USER2", [], [])
+        user3 = User(0, "LOGIN_USER3", "FN_USER3", "SN_USER3", "MN_USER3", [], [])
+        user4 = User(0, "LOGIN_USER4", "FN_USER4", "SN_USER4", "MN_USER4", [], [])
+        user5 = User(0, "LOGIN_USER5", "FN_USER5", "SN_USER5", "MN_USER5", [], [])
+        _, user1 = self.core.db.addUser(user1)
+        _, user2 = self.core.db.addUser(user2)
+        _, user3 = self.core.db.addUser(user3)
+        _, user4 = self.core.db.addUser(user4)
+        _, user5 = self.core.db.addUser(user5)
+        alg1 = Algorithm(0, "TITLE_ALG1", "DESCR_ALG1", user1.user_id, "SOURCE_ALG1", [], 0, 0)
+        alg2 = Algorithm(0, "TITLE_ALG2", "DESCR_ALG2", user1.user_id, "SOURCE_ALG2", [], 0, 0)
+        alg3 = Algorithm(0, "TITLE_ALG3", "DESCR_ALG3", user2.user_id, "SOURCE_ALG3", [], 0, 0)
+        _, alg1 = self.core.db.addAlg(alg1)
+        _, alg2 = self.core.db.addAlg(alg2)
+        _, alg3 = self.core.db.addAlg(alg3)
+        user3.bound_ids = [alg1.alg_id, alg2.alg_id]
+        user4.bound_ids = [alg2.alg_id]
+        user5.bound_ids = [alg1.alg_id, alg2.alg_id, alg3.alg_id]
+        st1 = self.core.db.bindAlg(user3)
+        st2 = self.core.db.bindAlg(user4)
+        st3 = self.core.db.bindAlg(user5)
+        self.assertEqual(st1, DBStatus.s_ok)
+        self.assertEqual(st2, DBStatus.s_ok)
+        self.assertEqual(st3, DBStatus.s_ok)
+        _, user3 = self.core.db.getUserByID(user3.user_id)
+        _, user4 = self.core.db.getUserByID(user4.user_id)
+        _, user5 = self.core.db.getUserByID(user5.user_id)
+        self.assertEqual(user3.bound_ids, [alg1.alg_id, alg2.alg_id])
+        self.assertEqual(user4.bound_ids, [alg2.alg_id])
+        self.assertEqual(user5.bound_ids, [alg1.alg_id, alg2.alg_id, alg3.alg_id])
+
+    def test_cant_update_user_bound_algs_with_incorrect_user_id(self):
+        user = User(0, "LOGIN_USER", "FN_USER", "SN_USER", "MN_USER", [], [])
+        status = self.core.db.bindAlg(user)
+        self.assertEqual(status, DBStatus.s_data_issue)
+        status, _ = self.core.db.getUserByID(user.user_id)
+        self.assertEqual(status, DBStatus.s_data_issue)
+
+    def test_cant_update_user_bound_algs_with_incorrect_alg_id_1(self):
+        user = User(0, "LOGIN_USER", "FN_USER", "SN_USER", "MN_USER", [], [])
+        _, user = self.core.db.addUser(user)
+        user.bound_ids = [1]
+        status = self.core.db.bindAlg(user)
+        self.assertEqual(status, DBStatus.s_data_issue)
+        status, user = self.core.db.getUserByID(user.user_id)
+        self.assertEqual(user.bound_ids, [])
+
+    def test_cant_update_user_bound_algs_with_incorrect_alg_id_2(self):
+        user = User(0, "LOGIN_USER", "FN_USER", "SN_USER", "MN_USER", [], [])
+        _, user = self.core.db.addUser(user)
+        alg = Algorithm(0, "TITLE_ALG", "DESCR_ALG", user.user_id, "SOURCE_ALG", [], 0, 0)
+        _, alg = self.core.db.addAlg(alg)
+        _, user = self.core.db.getUserByID(user.user_id)
+        user.bound_ids = [alg.alg_id]
+        status = self.core.db.bindAlg(user)
+        self.assertEqual(status, DBStatus.s_data_issue)
+        status, user = self.core.db.getUserByID(user.user_id)
+        self.assertEqual(user.bound_ids, [])
+
+    def test_cant_add_alg_with_negative_cost(self):
+        user = User(0, "LOGIN_USER", "FN_USER", "SN_USER", "MN_USER", [], [])
+        _, user = self.core.db.addUser(user)
+        alg = Algorithm(0, "TITLE_ALG", "DESCR_ALG", user.user_id, "SOURCE_ALG", [], 0, -100)
+        st, alg = self.core.db.addAlg(alg)
+        self.assertEqual(st, DBStatus.s_data_issue)
+        self.assertEqual(self.core.db._getNextID("1a"), DBStatus.s_data_issue)
+
+    def test_can_update_alg_cost(self):
+        user = User(0, "LOGIN_USER", "FN_USER", "SN_USER", "MN_USER", [], [])
+        _, user = self.core.db.addUser(user)
+        alg = Algorithm(0, "TITLE_ALG", "DESCR_ALG", user.user_id, "SOURCE_ALG", [], 0, 0)
+        _, alg = self.core.db.addAlg(alg)
+        alg.cost = 100
+        status = self.core.db.updAlgCost(alg)
+        self.assertEqual(status, DBStatus.s_ok)
+        _, alg = self.core.db.getAlgByID(alg.alg_id)
+        self.assertEqual(alg.cost, 100)
+
+    def test_cant_update_nonexisting_alg(self):
+        user = User(0, "LOGIN_USER", "FN_USER", "SN_USER", "MN_USER", [], [])
+        _, user = self.core.db.addUser(user)
+        alg = Algorithm(0, "TITLE_ALG", "DESCR_ALG", user.user_id, "SOURCE_ALG", [], 0, 0)
+        status = self.core.db.updAlgCost(alg)
+        self.assertEqual(status, DBStatus.s_data_issue)
+        status, _ = self.core.db.getAlgByID(alg.alg_id)
+        self.assertEqual(status, DBStatus.s_data_issue)
+
+    def test_cant_update_alg_cost_to_negative(self):
+        user = User(0, "LOGIN_USER", "FN_USER", "SN_USER", "MN_USER", [], [])
+        _, user = self.core.db.addUser(user)
+        alg = Algorithm(0, "TITLE_ALG", "DESCR_ALG", user.user_id, "SOURCE_ALG", [], 0, 0)
+        status = self.core.db.updAlgCost(alg)
+        self.assertEqual(status, DBStatus.s_data_issue)
+        status, _ = self.core.db.getAlgByID(alg.alg_id)
         self.assertEqual(status, DBStatus.s_data_issue)
