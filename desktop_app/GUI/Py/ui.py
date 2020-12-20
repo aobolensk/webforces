@@ -1,11 +1,11 @@
 from PyQt5 import QtWidgets
 
 import requests
-from desktop_app.GUI.Py import LoginWindow
-from desktop_app.GUI.Py import MainWindow
-from desktop_app.GUI.Py import SignupWindow
-from desktop_app.GUI.Py import Profile
-from desktop_app.GUI.Py import Statistic
+from GUI.Py import LoginWindow
+from GUI.Py import MainWindow
+from GUI.Py import SignupWindow
+from GUI.Py import Profile
+from GUI.Py import Statistic
 
 
 class LoginWindow(QtWidgets.QMainWindow, LoginWindow.Ui_MainWindow):
@@ -17,8 +17,8 @@ class LoginWindow(QtWidgets.QMainWindow, LoginWindow.Ui_MainWindow):
         self.passwordEdit.returnPressed.connect(self.logBtn)
 
     def resizeEvent(self, event):
-        self.authenticationField.move(int(self.centralwidget.width()/2 - self.authenticationField.width()/2),
-                                      int(self.centralwidget.height()/2 - self.authenticationField.height()/2))
+        self.authenticationField.move(self.centralwidget.width()//2 - self.authenticationField.width()//2,
+                                      self.centralwidget.height()//2 - self.authenticationField.height()//2)
 
     def logBtn(self):
         login = self.loginEdit.text()
@@ -58,8 +58,8 @@ class SignupWindow(QtWidgets.QMainWindow, SignupWindow.Ui_MainWindow):
         self.pushButton.clicked.connect(self.SignUpBtn)
 
     def resizeEvent(self, event):
-        self.authenticationField.move(int(self.centralwidget.width()/2 - self.authenticationField.width()/2),
-                                      int(self.centralwidget.height()/2 - self.authenticationField.height()/2))
+        self.authenticationField.move(self.centralwidget.width()//2 - self.authenticationField.width()//2,
+                                      self.centralwidget.height()//2 - self.authenticationField.height()//2)
 
     def SignUpBtn(self):
         username = self.usernameEdit.text()
@@ -168,8 +168,8 @@ class MainWindow(QtWidgets.QMainWindow, MainWindow.Ui_MainWindow):
         self.InfoField.setVisible(True)
 
     def resizeEvent(self, event=None):
-        self.InfoField.move(int(self.ViewField.width()/2 - self.InfoField.width()/2),
-                            int(self.ViewField.height()/2 - self.InfoField.height()/2))
+        self.InfoField.move(self.ViewField.width()//2 - self.InfoField.width()//2,
+                            self.ViewField.height()//2 - self.InfoField.height()//2)
 
     def outBtn(self):
         self.loginWin = LoginWindow()
