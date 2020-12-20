@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-# Form implementation generated from reading ui file 'MainWindow.ui'
+# Form implementation generated from reading ui file 'UI\MainWindow.ui'
 #
 # Created by: PyQt5 UI code generator 5.15.1
 #
@@ -14,7 +14,7 @@ from PyQt5 import QtCore, QtGui, QtWidgets
 class Ui_MainWindow(object):
     def setupUi(self, MainWindow):
         MainWindow.setObjectName("MainWindow")
-        MainWindow.resize(906, 720)
+        MainWindow.resize(954, 741)
         self.centralwidget = QtWidgets.QWidget(MainWindow)
         self.centralwidget.setObjectName("centralwidget")
         self.verticalLayout = QtWidgets.QVBoxLayout(self.centralwidget)
@@ -27,13 +27,11 @@ class Ui_MainWindow(object):
         self.widget.setSizePolicy(sizePolicy)
         self.widget.setMaximumSize(QtCore.QSize(16777215, 60))
         self.widget.setObjectName("widget")
-        self.layoutWidget = QtWidgets.QWidget(self.widget)
-        self.layoutWidget.setGeometry(QtCore.QRect(10, 10, 871, 39))
-        self.layoutWidget.setObjectName("layoutWidget")
-        self.horizontalLayout = QtWidgets.QHBoxLayout(self.layoutWidget)
-        self.horizontalLayout.setContentsMargins(0, 0, 0, 0)
+        self.horizontalLayout_2 = QtWidgets.QHBoxLayout(self.widget)
+        self.horizontalLayout_2.setObjectName("horizontalLayout_2")
+        self.horizontalLayout = QtWidgets.QHBoxLayout()
         self.horizontalLayout.setObjectName("horizontalLayout")
-        self.storeButton = QtWidgets.QPushButton(self.layoutWidget)
+        self.storeButton = QtWidgets.QPushButton(self.widget)
         self.storeButton.setMaximumSize(QtCore.QSize(16777215, 60))
         font = QtGui.QFont()
         font.setFamily("Calibri Light")
@@ -42,15 +40,16 @@ class Ui_MainWindow(object):
         self.storeButton.setAccessibleName("")
         self.storeButton.setObjectName("storeButton")
         self.horizontalLayout.addWidget(self.storeButton)
-        self.addButton = QtWidgets.QPushButton(self.layoutWidget)
+        self.addButton = QtWidgets.QPushButton(self.widget)
         self.addButton.setMaximumSize(QtCore.QSize(16777215, 60))
         font = QtGui.QFont()
         font.setFamily("Calibri Light")
         font.setPointSize(18)
         self.addButton.setFont(font)
+        self.addButton.setAccessibleName("")
         self.addButton.setObjectName("addButton")
         self.horizontalLayout.addWidget(self.addButton)
-        self.profileButton = QtWidgets.QPushButton(self.layoutWidget)
+        self.profileButton = QtWidgets.QPushButton(self.widget)
         self.profileButton.setMaximumSize(QtCore.QSize(16777215, 60))
         font = QtGui.QFont()
         font.setFamily("Calibri Light")
@@ -58,7 +57,7 @@ class Ui_MainWindow(object):
         self.profileButton.setFont(font)
         self.profileButton.setObjectName("profileButton")
         self.horizontalLayout.addWidget(self.profileButton)
-        self.statisticButton = QtWidgets.QPushButton(self.layoutWidget)
+        self.statisticButton = QtWidgets.QPushButton(self.widget)
         self.statisticButton.setMaximumSize(QtCore.QSize(16777215, 60))
         font = QtGui.QFont()
         font.setFamily("Calibri Light")
@@ -66,7 +65,7 @@ class Ui_MainWindow(object):
         self.statisticButton.setFont(font)
         self.statisticButton.setObjectName("statisticButton")
         self.horizontalLayout.addWidget(self.statisticButton)
-        self.outButton = QtWidgets.QPushButton(self.layoutWidget)
+        self.outButton = QtWidgets.QPushButton(self.widget)
         self.outButton.setMaximumSize(QtCore.QSize(16777215, 60))
         font = QtGui.QFont()
         font.setFamily("Calibri Light")
@@ -74,6 +73,7 @@ class Ui_MainWindow(object):
         self.outButton.setFont(font)
         self.outButton.setObjectName("outButton")
         self.horizontalLayout.addWidget(self.outButton)
+        self.horizontalLayout_2.addLayout(self.horizontalLayout)
         self.verticalLayout.addWidget(self.widget)
         self.ViewField = QtWidgets.QWidget(self.centralwidget)
         self.ViewField.setEnabled(True)

@@ -9,6 +9,7 @@ from GUI.Py import Profile
 from GUI.Py import Statistic
 from GUI.Py import Store
 from GUI.Py import NewAlg
+from GUI.Py import Purchase
 from enum import IntEnum
 
 
@@ -174,6 +175,7 @@ class newAlg(QtWidgets.QGroupBox, NewAlg.Ui_GroupBox):
                                            'login': self.login,
                                            'desc': desc,
                                            'langId': langId,
+                                           'cost': int(self.costEdit.text()),
                                            'code': code},
                                      headers={'Authorization': 'Token ' + self.token})
             status = ""
@@ -239,7 +241,46 @@ class store(QtWidgets.QGroupBox, Store.Ui_GroupBox):
             self.listWidget.addItem(QtWidgets.QListWidgetItem(line['title']))
 
     def getAlgBtn(self):
-        pass
+        self.buyWindow = purchase(self.token, self.login, str(self.listWidget.currentItem().text()))
+        self.buyWindow.show()
+
+
+class purchase(QtWidgets.QGroupBox, Purchase.Ui_GroupBox):
+    def __init__(self, token, login, alg_name):
+        super().__init__()
+        self.setupUi(self)
+        self.token = token
+        self.login = login
+        self.alg_name = alg_name
+        response = requests.get('http://127.0.0.1:8000/api/algs/' + self.alg_name,
+                                headers={'Authorization': 'Token ' + self.token})
+        if response.status_code == 200:
+            self.algInfo = response.json()
+        self.nameEdit.setText(self.algInfo['title'])
+        self.priceEdit.setText(str(self.algInfo['cost']))
+        self.CancelButton.clicked.connect(self.cancelBtn)
+        self.BuyButton.clicked.connect(self.buyBtn)
+
+    def cancelBtn(self):
+        self.close()
+
+    def buyBtn(self):
+        response = requests.get('http://127.0.0.1:8000/api/users/' + self.login,
+                                headers={'Authorization': 'Token ' + self.token})
+        if response.status_code == 200:
+            self.user = response.json()
+
+        if self.algInfo['alg_id'] in self.user['bound_ids']:
+            self.status.setText("You already have this algorithm")
+            return
+
+        response = requests.post('http://127.0.0.1:8000/api/algs/' + self.alg_name + '/store/',
+                                 data={'user_id': self.user['id']},
+                                 headers={'Authorization': 'Token ' + self.token})
+        if response.status_code == 200:
+            self.status.setText("You successfully bought algorithm")
+        else:
+            self.status.setText(response.text)
 
 
 class MainWindow(QtWidgets.QMainWindow, MainWindow.Ui_MainWindow):

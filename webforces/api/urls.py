@@ -14,4 +14,5 @@ urlpatterns = [
     path('algs/<str:title>/', views.AlgViewTitle.as_view()),
     path('algs/<int:id>/tests/', views.TestsViewByAlgID.as_view()),
     path('algs/<str:title>/tests/', views.TestsViewByAlgTitle.as_view()),
+    path('algs/<str:title>/store/', views.BuyViewByAlgTitle.as_view()),
 ]
