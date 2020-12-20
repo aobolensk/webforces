@@ -78,7 +78,6 @@ def test_can_access_password_reset_page(selenium: WebDriver):
     assert selenium.current_url == base_url + "accounts/password_reset/"
 
 
-@pytest.mark.skip(reason="store not implemented yet")
 @pytest.mark.web_test
 def test_can_navigate_to_store(selenium: WebDriver):
     selenium.get(base_url)

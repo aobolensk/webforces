@@ -25,7 +25,7 @@ class Href:
 def get_indexes(user):
     if user.is_superuser:
         return [
-            Href("Store", "/store", "store"),
+            Href("StoreButton", "/store", "store"),
             Href("UserProfileButton", "/users/"+user.username+"/", "profile"),
             Href("StatisticsButton", "/stats/", "stats"),
             Href("ApiButton", "/api/", "api"),
@@ -33,7 +33,7 @@ def get_indexes(user):
         ]
     elif user.is_authenticated:
         return [
-            Href("Store", "/store", "store"),
+            Href("StoreButton", "/store", "store"),
             Href("UserProfileButton", "/users/"+user.username+"/", "profile"),
             Href("SignOutButton", "/accounts/logout/", "sign out"),
         ]
