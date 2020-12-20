@@ -1,9 +1,9 @@
 #!/usr/bin/env python3
 import sys
+
 from PyQt5.QtWidgets import QApplication
 
-sys.path.insert(0, '..')
-from desktop_app.GUI.Py import ui # noqa
+from GUI.Py import ui
 
 
 def main():
