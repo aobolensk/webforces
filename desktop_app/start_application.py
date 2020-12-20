@@ -2,8 +2,8 @@
 import sys
 from PyQt5.QtWidgets import QApplication
 
-sys.path.insert(0, 'GUI/Py')
-import ui # noqa
+sys.path.insert(0, '..')
+from desktop_app.GUI.Py import ui # noqa
 
 
 def main():
