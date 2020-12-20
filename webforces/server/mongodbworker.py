@@ -299,6 +299,25 @@ class MongoDBWorker(dbworker.DBWorker):
         logger.debug("Algorithms were found")
         return (DBStatus.s_ok, algs)
 
+    def getAllBoundAlgs(self, author_id) -> Tuple[DBStatus, List[Algorithm]]:
+        try:
+            # check user
+            st, author = self.getUserByID(author_id)
+            if st == DBStatus.s_data_issue:
+                logger.error("This user does not exist")
+                return (DBStatus.s_data_issue, [Algorithm(ERROR_ID)])
+            # get algs
+            algs_collection = self.db["algs"]
+            algs = []
+            for alg_id in author.bound_ids:
+                alg_d = algs_collection.find_one({"alg_id": alg_id})
+                algs.append(Algorithm.fromDict(alg_d))
+        except Exception as e:
+            logger.error(f"MongoDBWorker connection failed: {e}")
+            return (DBStatus.s_connection_error, [Algorithm(ERROR_ID)])
+        logger.debug("Algorithms were found")
+        return (DBStatus.s_ok, algs)
+
     def getAllAlgs(self) -> Tuple[DBStatus, List[Algorithm]]:
         try:
             algs_collection = self.db["algs"]
