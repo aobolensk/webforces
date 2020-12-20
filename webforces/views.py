@@ -93,12 +93,7 @@ class StoreView(MainPageView):
         context = super().get_context_data(**kwargs)
         core = Core()
         status, algorithms_list = core.db.getAllAlgs()
-
-        status, user = core.db.getUserByLogin(self.request.user.username)
-        if status != DBStatus.s_ok:
-            messages.error(self.request, "Internal error: can not find current user!")
-        else:
-            context["algorithms_list"] = algorithms_list
+        context["algorithms_list"] = algorithms_list
         return context
 
 
