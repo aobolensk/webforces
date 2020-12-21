@@ -127,7 +127,6 @@ class AlgsView(APIView):
     def post(self, request):
         core = Core()
         data = request.data
-        print(data['login'])
         status, user_db = core.db.getUserByLogin(data['login'])
 
         alg = Algorithm(title=data['title'],
