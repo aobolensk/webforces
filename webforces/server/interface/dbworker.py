@@ -90,6 +90,10 @@ class DBWorker(abc.ABC):
         pass
 
     @abc.abstractmethod
+    def updTaskStatus(self, task) -> DBStatus:
+        pass
+
+    @abc.abstractmethod
     def getTask(self, task_id) -> Tuple[DBStatus, Task]:
         pass
 

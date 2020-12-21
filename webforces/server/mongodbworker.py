@@ -450,6 +450,27 @@ class MongoDBWorker(dbworker.DBWorker):
         logger.debug("New task was successfully added")
         return (DBStatus.s_ok, task)
 
+    def updTaskStatus(self, task) -> DBStatus:
+        try:
+            tasks_collection = self.db["tasks"]
+            task_d = tasks_collection.find_one({"task_id": task.task_id})
+            if task_d is None:
+                logger.error("This task does not exist")
+                return DBStatus.s_data_issue
+            task_d = tasks_collection.update_one(
+                {"task_id": task.task_id}, {"$set": {
+                    "status": task.status,
+                    "message": task.message,
+                }})
+            if task_d is None:
+                logger.error("Task update failed")
+                return DBStatus.s_data_issue
+        except Exception as e:
+            logger.error(f"MongoDBWorker connection failed: {e}")
+            return DBStatus.s_connection_error
+        logger.debug("Task was updated")
+        return DBStatus.s_ok
+
     def getTask(self, task_id) -> Tuple[DBStatus, Task]:
         try:
             tasks_collection = self.db["tasks"]
