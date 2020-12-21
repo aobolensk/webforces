@@ -231,6 +231,8 @@ class AlgView(MainPageView):
         for task in tasks:
             if task.alg_id == context["alg_id"]:
                 validations.append(Validation(task.task_id, task.status, task.message))
+        validations.reverse()
+        validations = validations[:10]
         for i in range(len(tests)):
             tests[i] = tests[i].__dict__
         context["title"] = alg.title
