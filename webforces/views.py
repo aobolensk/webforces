@@ -10,7 +10,7 @@ from django.views.generic.edit import FormView
 from loguru import logger
 
 from webforces.server.core import Core
-from webforces.server.structs import DBStatus, Algorithm, Language, Test
+from webforces.server.structs import DBStatus, Algorithm, Test
 from webforces.settings import GIT_REPO_LINK
 from webforces.forms import BuyAlgForm, NewAlgForm, NewTestForm, UpdUserForm
 
@@ -190,7 +190,7 @@ class AddAlgView(FormView):
                               author_id=user.user_id,
                               source=form.cleaned_data['source'],
                               cost=form.cleaned_data['cost'],
-                              lang_id=Language.lang_cpp,  # WA
+                              lang_id=form.cleaned_data['language'],
                               )
         status, alg = core.db.addAlg(algorithm)
         if status == DBStatus.s_ok:
@@ -219,6 +219,7 @@ class AlgView(MainPageView):
         context["description"] = alg.description
         context["source_code"] = alg.source
         context["tests"] = tests
+        context["language"] = str(alg.lang_id)
         return context
 
 
