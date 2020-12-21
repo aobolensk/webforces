@@ -217,7 +217,7 @@ class store(QtWidgets.QGroupBox, Store.Ui_GroupBox):
                 self.langInfo.setText('C++')
 
             algAuthor = requests.get('http://127.0.0.1:8000/api/users/' + str(algInfo['author_id']),
-                        headers={'Authorization': 'Token ' + self.token}).json()['login']
+                                     headers={'Authorization': 'Token ' + self.token}).json()['login']
             self.authorInfo.setText(algAuthor)
 
             userInfo = requests.get('http://127.0.0.1:8000/api/users/' + self.login,
@@ -232,10 +232,8 @@ class store(QtWidgets.QGroupBox, Store.Ui_GroupBox):
             self.errorLabel.setText(f"Can't find algorithm '{title}'")
 
     def getListAlgs(self):
-        response = requests.get(
-            'http://127.0.0.1:8000/api/algs/',
-            headers={'Authorization': 'Token ' + self.token}
-        )
+        response = requests.get('http://127.0.0.1:8000/api/algs/',
+                                headers={'Authorization': 'Token ' + self.token})
         json = response.json()
         for line in json:
             self.listWidget.addItem(QtWidgets.QListWidgetItem(line['title']))
