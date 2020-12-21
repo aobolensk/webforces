@@ -17,5 +17,11 @@ class ExecTasksTest(TestCase):
         alg1 = Algorithm(0, "TITLE_ALG1", "DESCR_ALG1", user1.user_id, "SOURCE_ALG1", [], Language.lang_cpp, 0)
         _, alg1 = self.core.db.addAlg(alg1)
         task_id = self.core.schedule_task(alg1.alg_id)
-        status = self.core.get_runner(alg1.alg_id).check_status(task_id)
-        self.assertNotEqual(status, RunnerStatus.s_unknown)
+        status, message = self.core.get_runner(alg1.alg_id).check_status(task_id)
+        print(status)
+        self.assertTrue(
+            (status == RunnerStatus.s_scheduled or
+             status == RunnerStatus.s_compiling or
+             status == RunnerStatus.s_running or
+             status == RunnerStatus.s_finished))
+        self.assertNotEqual(message, "")
