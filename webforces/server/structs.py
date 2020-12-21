@@ -27,8 +27,8 @@ class Language(IntEnum):
     @classmethod
     def get_list(cls):
         return [
-            (Language.lang_unknown, "Unknown"),
-            (Language.lang_cpp, "C++"),
+            (Language.lang_unknown.value, "Unknown"),
+            (Language.lang_cpp.value, "C++"),
         ]
 
 

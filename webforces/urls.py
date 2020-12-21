@@ -33,4 +33,5 @@ urlpatterns = [
     path('stats/', views.StatsView.as_view()),
     path('store/', views.StoreView.as_view()),
     path('add_alg/', views.AddAlgView.as_view()),
+    path('run/<int:alg_id>/', views.RunTaskView.as_view()),
 ]

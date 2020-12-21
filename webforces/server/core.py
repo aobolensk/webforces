@@ -73,7 +73,7 @@ class Core:
         if status != DBStatus.s_ok:
             logger.error(f"Could not schedule task for algorithm {alg_id}")
             return None
-        runner = [runner for runner in self.runners if runner.lang_id == alg.lang_id]
+        runner = [runner for runner in self.runners if runner.lang_id.value == int(alg.lang_id)]
         if not runner:
             logger.error(f"Could not find runner for language {alg.lang_id}")
             return None

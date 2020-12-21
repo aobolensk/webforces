@@ -5,7 +5,7 @@ from django.contrib.auth import authenticate, login
 from django.contrib.auth.forms import AuthenticationForm, UserCreationForm
 from django.core.exceptions import PermissionDenied
 from django.shortcuts import redirect, render
-from django.views.generic.base import TemplateView
+from django.views.generic.base import RedirectView, TemplateView
 from django.views.generic.edit import FormView
 from loguru import logger
 
@@ -221,6 +221,14 @@ class AlgView(MainPageView):
         context["tests"] = tests
         context["language"] = str(alg.lang_id)
         return context
+
+
+class RunTaskView(RedirectView):
+    def get_redirect_url(self, **kwargs):
+        core = Core()
+        logger.info(f"User {self.request.user.username} scheduled task for algorithm {self.kwargs['alg_id']}")
+        core.schedule_task(self.kwargs['alg_id'])
+        return f"/store/{self.kwargs['alg_id']}/alg/"
 
 
 class AddTestView(FormView):
