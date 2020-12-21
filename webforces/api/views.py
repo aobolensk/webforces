@@ -5,7 +5,7 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from webforces.server.core import Core
-from webforces.server.structs import DBStatus, User
+from webforces.server.structs import DBStatus, User, Algorithm
 
 
 class StatsView(APIView):
@@ -90,6 +90,8 @@ class UserViewLogin(APIView):
             "first_name": user.first_name,
             "second_name": user.second_name,
             "middle_name": user.middle_name,
+            "algs_id": user.algs_id,
+            "bound_ids": user.bound_ids
         }
 
         return Response(data)
@@ -116,15 +118,30 @@ class AlgsView(APIView):
 
     def get(self, request):
         core = Core()
+        data = []
         status, algs = core.db.getAllAlgs()
-
-        if status != DBStatus.s_ok:
-            raise Exception("Could not get algs")
-
-        data = {
-            "count": len(algs),
-        }
+        for alg in algs:
+            data.append(alg.__dict__)
         return Response(data)
+
+    def post(self, request):
+        core = Core()
+        data = request.data
+        print(data['login'])
+        status, user_db = core.db.getUserByLogin(data['login'])
+
+        alg = Algorithm(title=data['title'],
+                        description=data['desc'],
+                        author_id=user_db.user_id,
+                        source=data['code'],
+                        lang_id=data['langId'],
+                        alg_id=0)
+
+        status, alg = core.db.addAlg(alg)
+        
+        if status != DBStatus.s_ok:
+            return Response({"error": f"Could not add algorithm: {status}"}, status=500)
+        return Response({"success": f"Algorithm {alg.title} with id {alg.alg_id} was successfully added"})
 
 
 class AlgViewID(APIView):
@@ -147,7 +164,6 @@ class AlgViewID(APIView):
         }
         return Response(data)
 
-
 class AlgViewTitle(APIView):
     permission_classes = (IsAuthenticated,)
 
@@ -165,6 +181,7 @@ class AlgViewTitle(APIView):
             "source": alg.source,
             "tests_id": alg.tests_id,
             "lang_id": alg.lang_id,
+            "description": alg.description
         }
         return Response(data)
 

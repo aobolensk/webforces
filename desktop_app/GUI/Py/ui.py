@@ -1,11 +1,19 @@
 from PyQt5 import QtWidgets
 
 import requests
+
 from GUI.Py import LoginWindow
 from GUI.Py import MainWindow
 from GUI.Py import SignupWindow
 from GUI.Py import Profile
 from GUI.Py import Statistic
+from GUI.Py import Store
+from GUI.Py import NewAlg
+from enum import IntEnum
+
+class Language(IntEnum):
+    lang_unknown = 0
+    lang_cpp = 1
 
 
 class LoginWindow(QtWidgets.QMainWindow, LoginWindow.Ui_MainWindow):
@@ -140,6 +148,102 @@ class profile(QtWidgets.QGroupBox, Profile.Ui_GroupBox):
         self.state = 1 - self.state
 
 
+class newAlg(QtWidgets.QGroupBox, NewAlg.Ui_GroupBox):
+    def __init__(self, parent, token, login):
+        super().__init__(parent)
+        self.setupUi(self)
+        self.token = token
+        self.login = login
+        self.addButton.clicked.connect(self.add)
+
+    def add(self):
+        title = self.nameEdit.text()
+        desc = self.descEdit.text()
+        langText = self.langBox.currentText()
+
+        if langText == "Unknown":
+            langId = Language.lang_unknown.value
+        elif langText == "C++":
+            langId = Language.lang_cpp.value
+
+        code = self.codeEdit.toPlainText()
+        if title and desc and code:
+            response = requests.post(
+            'http://127.0.0.1:8000/api/algs/',
+            data={'title': title,
+                  'login': self.login,
+                  'desc': desc,
+                  'langId': langId,
+                  'code': code},
+                headers={'Authorization': 'Token ' + self.token})
+            status = ""
+            if response.status_code == 200:
+                status = response.json()
+            return status
+
+
+class store(QtWidgets.QGroupBox, Store.Ui_GroupBox):
+    def __init__(self, parent, token, login):
+        super().__init__(parent)
+        self.setupUi(self)
+        self.token = token
+        self.login = login
+        self.listWidget.itemClicked.connect(self.algClick)
+        self.getListAlgs()
+        self.findButton.clicked.connect(self.findBtn)
+        self.getButton.clicked.connect(self.getAlgBtn)
+
+    def findBtn(self):
+        title = self.findEdit.text()
+        if title:
+            self.find(title)
+        else:
+            self.errorLabel.setText('Please enter algorithm title')
+
+    def algClick(self, item):
+        self.find(item.text())
+
+    def find(self, title):
+        response = requests.get('http://127.0.0.1:8000/api/algs/' + title,
+                                headers={'Authorization': 'Token ' + self.token})
+        if response.status_code == 200:
+            algInfo = response.json()
+            self.errorLabel.setText('')
+            self.descInfo.setText(algInfo['description'])
+            langId = algInfo['lang_id']
+            if langId == str(Language.lang_unknown.value):
+                self.langInfo.setText('Unknown')
+            elif langId == str(Language.lang_cpp.value):
+                self.langInfo.setText('C++')
+
+            algAuthor = requests.get('http://127.0.0.1:8000/api/users/' + str(algInfo['author_id']),
+                        headers={'Authorization': 'Token ' + self.token}).json()['login']
+            self.authorInfo.setText(algAuthor)
+            
+            userInfo = requests.get('http://127.0.0.1:8000/api/users/' + self.login,
+                                    headers={'Authorization': 'Token ' + self.token}).json()
+
+            if algInfo['alg_id'] in userInfo['algs_id'] or algInfo['alg_id'] in userInfo['bound_ids']:
+                self.codeBrowser.setText(algInfo['source'])
+            else:
+                self.codeBrowser.setText('Please get this algorithm')
+
+        else:
+            self.errorLabel.setText(f"Can't find algorithm '{title}'")
+
+    def getListAlgs(self):
+        response = requests.get(
+            'http://127.0.0.1:8000/api/algs/',
+            headers={'Authorization': 'Token ' + self.token}
+        )
+        json = response.json()
+        for line in json:
+            self.listWidget.addItem(QtWidgets.QListWidgetItem(line['title']))
+
+    def getAlgBtn(self):
+        pass
+
+
 class MainWindow(QtWidgets.QMainWindow, MainWindow.Ui_MainWindow):
     def __init__(self, token, login):
         super().__init__()
@@ -148,12 +252,22 @@ class MainWindow(QtWidgets.QMainWindow, MainWindow.Ui_MainWindow):
         self.setupUi(self)
         self.InfoField.setVisible(False)
         self.storeButton.clicked.connect(self.storeBtn)
+        self.addButton.clicked.connect(self.addAlgBtn)
         self.profileButton.clicked.connect(self.profileBtn)
         self.statisticButton.clicked.connect(self.statisticBtn)
         self.outButton.clicked.connect(self.outBtn)
 
     def storeBtn(self):
-        print("storeBtn")
+        self.InfoField.setVisible(False)
+        self.InfoField = store(self.ViewField, self.token, self.login)
+        self.resizeEvent()
+        self.InfoField.setVisible(True)
+
+    def addAlgBtn(self):
+        self.InfoField.setVisible(False)
+        self.InfoField = newAlg(self.ViewField, self.token, self.login)
+        self.resizeEvent()
+        self.InfoField.setVisible(True)
 
     def profileBtn(self):
         self.InfoField.setVisible(False)
