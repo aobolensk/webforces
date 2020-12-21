@@ -36,6 +36,12 @@
     border:1px solid #000;
 }
 
+.validations_list {
+    width:98%;
+    padding-left: 10;
+    border:1px solid #000;
+}
+
 .test {
     width:98%;
     padding-left: 10;
