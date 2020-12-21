@@ -322,7 +322,7 @@ class BuyAlgView(FormView):
         user.bound_ids.append(self.kwargs["alg_id"])
         status = core.db.bindAlg(user)
         if status == DBStatus.s_ok:
-            messages.info(self.request, 'New algorithm was successfully added!')
+            messages.info(self.request, 'The alogrithm has been added to your account!')
         else:
             messages.error(self.request, 'Internal error: can not buy algorithm!')
         return super().form_valid(form)
