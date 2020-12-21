@@ -32,9 +32,11 @@
 {% endfor %}
 
 <h2>Validations:</h2>
-{% for val in validations %}
-    {{ val.id }}: {{ val.status }} - {{ val.message }}<br>
-{% endfor %}
+<div class="validations_list">
+    {% for val in validations %}
+        {{ val.id }}: {{ val.status }} - {{ val.message }}<br>
+    {% endfor %}
+</div>
 
 {% if messages %}
     {% for message in messages %}
