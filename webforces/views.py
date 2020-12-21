@@ -192,7 +192,7 @@ class AddAlgView(FormView):
                               cost=form.cleaned_data['cost'],
                               lang_id=form.cleaned_data['language'],
                               )
-        status, alg = core.db.addAlg(algorithm)
+        status, _ = core.db.addAlg(algorithm)
         if status == DBStatus.s_ok:
             messages.info(self.request, 'New algorithm was successfully added!')
         else:
@@ -250,7 +250,7 @@ class AddTestView(FormView):
         test = Test(
             0, self.kwargs['alg_id'], form.cleaned_data['title'],
             form.cleaned_data['input'], form.cleaned_data['output'])
-        status = core.db.addTest(test)
+        status, _ = core.db.addTest(test)
         if status != DBStatus.s_ok:
             messages.error(self.request, "Internal error: can not add test!")
             return super().form_valid(form)
