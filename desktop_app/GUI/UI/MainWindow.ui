@@ -29,91 +29,116 @@
         <height>60</height>
        </size>
       </property>
-      <layout class="QHBoxLayout" name="horizontalLayout_2">
-       <item>
-        <layout class="QHBoxLayout" name="horizontalLayout">
-         <item>
-          <widget class="QPushButton" name="storeButton">
-           <property name="maximumSize">
-            <size>
-             <width>16777215</width>
-             <height>60</height>
-            </size>
-           </property>
-           <property name="font">
-            <font>
-             <family>Calibri Light</family>
-             <pointsize>18</pointsize>
-            </font>
-           </property>
-           <property name="accessibleName">
-            <string/>
-           </property>
-           <property name="text">
-            <string>Store</string>
-           </property>
-          </widget>
-         </item>
-         <item>
-          <widget class="QPushButton" name="profileButton">
-           <property name="maximumSize">
-            <size>
-             <width>16777215</width>
-             <height>60</height>
-            </size>
-           </property>
-           <property name="font">
-            <font>
-             <family>Calibri Light</family>
-             <pointsize>18</pointsize>
-            </font>
-           </property>
-           <property name="text">
-            <string>My profile</string>
-           </property>
-          </widget>
-         </item>
-         <item>
-          <widget class="QPushButton" name="statisticButton">
-           <property name="maximumSize">
-            <size>
-             <width>16777215</width>
-             <height>60</height>
-            </size>
-           </property>
-           <property name="font">
-            <font>
-             <family>Calibri Light</family>
-             <pointsize>18</pointsize>
-            </font>
-           </property>
-           <property name="text">
-            <string>Statistics</string>
-           </property>
-          </widget>
-         </item>
-         <item>
-          <widget class="QPushButton" name="outButton">
-           <property name="maximumSize">
-            <size>
-             <width>16777215</width>
-             <height>60</height>
-            </size>
-           </property>
-           <property name="font">
-            <font>
-             <family>Calibri Light</family>
-             <pointsize>18</pointsize>
-            </font>
-           </property>
-           <property name="text">
-            <string>Sign out</string>
-           </property>
-          </widget>
-         </item>
-        </layout>
-       </item>
-      </layout>
+      <widget class="QWidget" name="layoutWidget">
+       <property name="geometry">
+        <rect>
+         <x>10</x>
+         <y>10</y>
+         <width>871</width>
+         <height>39</height>
+        </rect>
+       </property>
+       <layout class="QHBoxLayout" name="horizontalLayout">
+        <item>
+         <widget class="QPushButton" name="storeButton">
+          <property name="maximumSize">
+           <size>
+            <width>16777215</width>
+            <height>60</height>
+           </size>
+          </property>
+          <property name="font">
+           <font>
+            <family>Calibri Light</family>
+            <pointsize>18</pointsize>
+           </font>
+          </property>
+          <property name="accessibleName">
+           <string/>
+          </property>
+          <property name="text">
+           <string>Store</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QPushButton" name="addButton">
+          <property name="maximumSize">
+           <size>
+            <width>16777215</width>
+            <height>60</height>
+           </size>
+          </property>
+          <property name="font">
+           <font>
+            <family>Calibri Light</family>
+            <pointsize>18</pointsize>
+           </font>
+          </property>
+          <property name="text">
+           <string>Add algorithm</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QPushButton" name="profileButton">
+          <property name="maximumSize">
+           <size>
+            <width>16777215</width>
+            <height>60</height>
+           </size>
+          </property>
+          <property name="font">
+           <font>
+            <family>Calibri Light</family>
+            <pointsize>18</pointsize>
+           </font>
+          </property>
+          <property name="text">
+           <string>My profile</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QPushButton" name="statisticButton">
+          <property name="maximumSize">
+           <size>
+            <width>16777215</width>
+            <height>60</height>
+           </size>
+          </property>
+          <property name="font">
+           <font>
+            <family>Calibri Light</family>
+            <pointsize>18</pointsize>
+           </font>
+          </property>
+          <property name="text">
+           <string>Statistics</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QPushButton" name="outButton">
+          <property name="maximumSize">
+           <size>
+            <width>16777215</width>
+            <height>60</height>
+           </size>
+          </property>
+          <property name="font">
+           <font>
+            <family>Calibri Light</family>
+            <pointsize>18</pointsize>
+           </font>
+          </property>
+          <property name="text">
+           <string>Sign out</string>
+          </property>
+         </widget>
+        </item>
+       </layout>
+      </widget>
      </widget>
     </item>
     <item>
