@@ -41,7 +41,6 @@ def test_can_reset_password(qtbot: QtBot):
     assert window.forgotPasswordLabel.openExternalLinks()
 
 
-@pytest.mark.skip(reason="store is not implemented yet")
 @pytest.mark.app_test
 def test_can_navigate_to_store(qtbot: QtBot):
     window = ui.LoginWindow()
