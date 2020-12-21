@@ -24,6 +24,13 @@ class Language(IntEnum):
     lang_unknown = 0
     lang_cpp = 1
 
+    @classmethod
+    def get_list(cls):
+        return [
+            (Language.lang_unknown, "Unknown"),
+            (Language.lang_cpp, "C++"),
+        ]
+
 
 @dataclass
 class User:

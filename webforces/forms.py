@@ -1,9 +1,12 @@
+from webforces.server.structs import Language
 from django import forms
 
 
 class NewAlgForm(forms.Form):
     title = forms.CharField(max_length=100, label="",
                             widget=forms.TextInput(attrs={'id': 'NewAlgTitle', 'placeholder': 'Title'}))
+    language = forms.ChoiceField(
+        choices=Language.get_list()[1:], widget=forms.RadioSelect)
     description = forms.CharField(label="",
                                   widget=forms.Textarea(attrs={'id': 'NewAlgDescription',
                                                                'placeholder': 'Description'}))
