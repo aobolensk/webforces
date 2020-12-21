@@ -120,7 +120,7 @@ class RestApiSuperUserTest(TestCase):
         response = self.client.get('/api/algs/')
         self.assertEqual(response.status_code, 200)
         stats = response.json()
-        self.assertEqual(stats["count"], 0)
+        self.assertEqual(stats, [])
 
     def testGetAlgsEndpointWithAddedUser(self):
         self.core.db.addUser(User(0, "LOGIN_USER1", "FN_USER1", "SN_USER1", "MN_USER1", [], []))
