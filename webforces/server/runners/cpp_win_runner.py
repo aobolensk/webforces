@@ -1,19 +1,20 @@
-from loguru import logger
+from typing import TYPE_CHECKING
+
 from webforces.server.interface.runner import Runner
-from webforces.server.structs import Language, RunnerStatus
+from webforces.server.structs import Language
+
+if TYPE_CHECKING:
+    from webforces.server.core import Core
 
 
 class CppWinRunner(Runner):
     lang_id = Language.lang_cpp
+
+    def __init__(self, core: 'Core') -> None:
+        super().__init__(core)
 
     def compile(self, task_id: int, alg_id: int) -> bool:
         raise NotImplementedError
 
     def test(self, task_id: int, test_id: int) -> bool:
         raise NotImplementedError
-
-    def execute(self, task_id: int, alg_id: int) -> bool:
-        logger.info(f"Started execution of task {task_id} for alg {alg_id}")
-        self.status[task_id] = RunnerStatus.s_scheduled
-        logger.info(f"Finished execution of task {task_id} for alg {alg_id}")
-        return True
