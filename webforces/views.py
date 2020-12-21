@@ -22,6 +22,13 @@ class Href:
     description: str = ''
 
 
+@dataclass
+class Validation:
+    id: int
+    status: int
+    message: str
+
+
 def get_indexes(user):
     if user.is_superuser:
         return [
@@ -213,6 +220,17 @@ class AlgView(MainPageView):
             messages.error(self.request, "Internal error: can not find current user!")
             return context
         status, tests = core.db.getAllAlgTests(context["alg_id"])
+        if status != DBStatus.s_ok:
+            messages.error(self.request, "Internal error: can not get algorithm tests!")
+            return context
+        status, tasks = core.db.getAllTasks()
+        if status != DBStatus.s_ok:
+            messages.error(self.request, "Internal error: can not get validations!")
+            return context
+        validations = []
+        for task in tasks:
+            if task.alg_id == context["alg_id"]:
+                validations.append(Validation(task.task_id, task.status, task.message))
         for i in range(len(tests)):
             tests[i] = tests[i].__dict__
         context["title"] = alg.title
@@ -220,6 +238,7 @@ class AlgView(MainPageView):
         context["source_code"] = alg.source
         context["tests"] = tests
         context["language"] = str(alg.lang_id)
+        context["validations"] = validations
         return context
 
 
