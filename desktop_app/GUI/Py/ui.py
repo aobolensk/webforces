@@ -11,6 +11,7 @@ from GUI.Py import Store
 from GUI.Py import NewAlg
 from enum import IntEnum
 
+
 class Language(IntEnum):
     lang_unknown = 0
     lang_cpp = 1
@@ -168,14 +169,13 @@ class newAlg(QtWidgets.QGroupBox, NewAlg.Ui_GroupBox):
 
         code = self.codeEdit.toPlainText()
         if title and desc and code:
-            response = requests.post(
-            'http://127.0.0.1:8000/api/algs/',
-            data={'title': title,
-                  'login': self.login,
-                  'desc': desc,
-                  'langId': langId,
-                  'code': code},
-                headers={'Authorization': 'Token ' + self.token})
+            response = requests.post('http://127.0.0.1:8000/api/algs/',
+                                     data={'title': title,
+                                     'login': self.login,
+                                     'desc': desc,
+                                     'langId': langId,
+                                     'code': code},
+                                     headers={'Authorization': 'Token ' + self.token})
             status = ""
             if response.status_code == 200:
                 status = response.json()
@@ -219,7 +219,7 @@ class store(QtWidgets.QGroupBox, Store.Ui_GroupBox):
             algAuthor = requests.get('http://127.0.0.1:8000/api/users/' + str(algInfo['author_id']),
                         headers={'Authorization': 'Token ' + self.token}).json()['login']
             self.authorInfo.setText(algAuthor)
-            
+
             userInfo = requests.get('http://127.0.0.1:8000/api/users/' + self.login,
                                     headers={'Authorization': 'Token ' + self.token}).json()
 
