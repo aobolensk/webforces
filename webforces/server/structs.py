@@ -12,12 +12,12 @@ class DBStatus(Enum):
     s_data_issue = -2
 
 
-class RunnerStatus(Enum):
+class RunnerStatus(IntEnum):
     s_unknown = 0
-    s_scheduled = 1
-    s_compiling = 2
-    s_running = 3
-    s_finished = 4
+    s_scheduled = -1
+    s_compiling = -2
+    s_running = -3
+    s_finished = -4
 
 
 class Language(IntEnum):

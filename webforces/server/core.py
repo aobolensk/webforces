@@ -10,7 +10,7 @@ from webforces.server.interface.runner import Runner
 from webforces.server.mongodbworker import MongoDBWorker
 from webforces.server.runners.cpp_lin_runner import CppLinRunner
 from webforces.server.runners.cpp_win_runner import CppWinRunner
-from webforces.server.structs import DBStatus, Task
+from webforces.server.structs import DBStatus, RunnerStatus, Task
 
 
 class Core:
@@ -50,14 +50,14 @@ class Core:
 
     def _init_runners(self):
         if platform.system() == "Linux":
-            self.runners.append(CppLinRunner())
+            self.runners.append(CppLinRunner(self))
         elif platform.system() == "Windows":
-            self.runners.append(CppWinRunner())
+            self.runners.append(CppWinRunner(self))
         else:
             logger.warning("Unknown OS, no runners will be added")
 
     def schedule_task(self, alg_id: int) -> int:
-        task = Task(0, alg_id, -1, "[IN PROGRESS] scheduled")
+        task = Task(0, alg_id, RunnerStatus.s_scheduled.value, "[IN PROGRESS] scheduled")
         status, task = self.db.addTask(task)
         if status != DBStatus.s_ok:
             logger.error(f"Could not schedule task for algorithm {alg_id}")
