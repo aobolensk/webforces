@@ -138,7 +138,7 @@ class AlgsView(APIView):
                         alg_id=0)
 
         status, alg = core.db.addAlg(alg)
-        
+
         if status != DBStatus.s_ok:
             return Response({"error": f"Could not add algorithm: {status}"}, status=500)
         return Response({"success": f"Algorithm {alg.title} with id {alg.alg_id} was successfully added"})
@@ -163,6 +163,7 @@ class AlgViewID(APIView):
             "lang_id": alg.lang_id,
         }
         return Response(data)
+
 
 class AlgViewTitle(APIView):
     permission_classes = (IsAuthenticated,)
