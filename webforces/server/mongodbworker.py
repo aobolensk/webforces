@@ -358,6 +358,22 @@ class MongoDBWorker(dbworker.DBWorker):
         logger.debug("Algorithms was found")
         return (DBStatus.s_ok, algs, availables)
 
+    def checkAvailable(self, user_id, alg_id) -> Tuple[DBStatus, bool]:
+        try:
+            st, user = self.getUserByID(user_id)
+            if st == DBStatus.s_data_issue:
+                logger.error("This user does not exist")
+            st, alg = self.getAlgByID(alg_id)
+            if st == DBStatus.s_data_issue:
+                logger.error("This algorithm does not exist")
+                return (DBStatus.s_data_issue, Test(ERROR_ID, ERROR_ID))
+            if (alg.cost == 0) or (alg_id in user.algs_id) or (alg_id in user.bound_ids):
+                return (DBStatus.s_ok, True)
+        except Exception as e:
+            logger.error(f"MongoDBWorker connection failed: {e}")
+            return (DBStatus.s_connection_error, Task(ERROR_ID, ERROR_ID))
+        return (DBStatus.s_ok, False)
+
     def addTest(self, test) -> Tuple[DBStatus, Test]:
         try:
             # check alg
