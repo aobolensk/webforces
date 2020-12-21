@@ -168,6 +168,8 @@ class StoreView(MainPageView):
             algorithms_preview_list.append(Algorithms_preview(algorithms_list[i].alg_id,
                                            algorithms_list[i].title, algorithms_list[i].description,
                                            algorithms_list[i].cost, available_list[i]))
+            if self.request.user.is_superuser:
+                algorithms_preview_list[i].available = True
         context["algorithms_preview_list"] = algorithms_preview_list
         return context
 
@@ -243,6 +245,25 @@ class AlgView(MainPageView):
         context["validations"] = validations
         return context
 
+    def dispatch(self, request, *args, **kwargs):
+        core = Core()
+        if not self.request.user.is_superuser:
+            status, user = core.db.getUserByLogin(self.request.user.username)
+            if status != DBStatus.s_ok:
+                messages.error(self.request, "Internal error: can not find current user!")
+
+            status, alg = core.db.getAlgByID(self.kwargs["alg_id"])
+            if status != DBStatus.s_ok:
+                messages.error(self.request, "Internal error: can not find current user!")
+                return super().dispatch(request, *args, **kwargs)
+
+            status, is_available = core.db.checkAvailable(user.user_id, alg.alg_id)
+            if status != DBStatus.s_ok:
+                messages.error(self.request, "Internal error: can check available of alg!")
+            if not is_available:
+                return redirect('/Error403')
+        return super().dispatch(request, *args, **kwargs)
+
 
 class RunTaskView(RedirectView):
     def get_redirect_url(self, **kwargs):
@@ -305,6 +326,10 @@ class BuyAlgView(FormView):
         else:
             messages.error(self.request, 'Internal error: can not buy algorithm!')
         return super().form_valid(form)
+
+
+class Error403View(MainPageView):
+    template_name = 'error403.html'
 
 
 def sign_up(request):
