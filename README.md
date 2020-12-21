@@ -3,6 +3,7 @@
 ## How to install:
 1. Install [Python 3.7+](https://www.python.org/downloads/)
 1. Install [MongoDB](https://docs.mongodb.com/manual/installation/)
+1. Install gcc compiler and make sure `g++` is in your system PATH.
 1. Install webforces:
     ```bash
     python -m pip install -r requirements.txt

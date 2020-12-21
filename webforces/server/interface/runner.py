@@ -42,20 +42,20 @@ class Runner:
         task.message = "[IN PROGRESS] running"
         _ = self.core.db.updTaskStatus(task)
 
-        _, alg = self.core.db.getAlg(alg_id)
+        _, alg = self.core.db.getAlgByID(alg_id)
         failed_tests = []
         for test_id in alg.tests_id:
             try:
+                print(f"Starting test: {test_id}")
                 if not self.test(task_id, test_id):
                     failed_tests.append(test_id)
             except Exception:
                 failed_tests.append(test_id)
-
         task.status = RunnerStatus.s_finished.value
-        if failed_tests > 0:
-            task.message = f"[FAILED] Failed {len(failed_tests)} tests: {failed_tests}"
+        if failed_tests:
+            task.message = f"[FAILED] Failed {len(failed_tests)}/{len(alg.tests_id)} tests: {failed_tests}"
         else:
-            task.message = "[PASSED] All tests have passed"
+            task.message = f"[PASSED] All {len(alg.tests_id)} tests have passed"
         _ = self.core.db.updTaskStatus(task)
 
         logger.info(f"Finished execution of task {task_id} for alg {alg_id}")
