@@ -171,10 +171,10 @@ class newAlg(QtWidgets.QGroupBox, NewAlg.Ui_GroupBox):
         if title and desc and code:
             response = requests.post('http://127.0.0.1:8000/api/algs/',
                                      data={'title': title,
-                                     'login': self.login,
-                                     'desc': desc,
-                                     'langId': langId,
-                                     'code': code},
+                                           'login': self.login,
+                                           'desc': desc,
+                                           'langId': langId,
+                                           'code': code},
                                      headers={'Authorization': 'Token ' + self.token})
             status = ""
             if response.status_code == 200:
