@@ -9,20 +9,34 @@
 <h2>Language:</h2>{{ language }}<br>
 
 <h2>Description:</h2>
-<pre>{{ description }}</pre>
+    <pre class="alg_description">{{ description }}</pre>
 
 <h2>Source code:</h2>
-<pre>{{ source_code }}</pre>
+
+<div class="alg_source">
+    <pre>{{ source_code }}</pre>
+</div>
 
 <h2>Found {{ tests|length }} tests</h2>
 
 {% for test in tests %}
-    <h3>{{ test.test_id }}: {{ test.title }}</h3>
-    <h4>Input:</h4>
-    <pre>{{ test.input }}</pre>
-    <h4>Output:</h4>
-    <pre>{{ test.output }}</pre>
+    <div class="test">
+        <h3>{{ test.test_id }}: {{ test.title }}</h3>
+        <h4>Input:</h4>
+        <pre>{{ test.input }}</pre>
+        <h4>Output:</h4>
+        <pre>{{ test.output }}</pre>
+        <br>
+    </div>
     <br><br>
 {% endfor %}
+
+{% if messages %}
+    {% for message in messages %}
+        {% if message.tags %}
+            <script>alert("{{ message }}")</script>
+        {% endif %}
+    {% endfor %}
+{% endif %}
 
 {% endblock %}

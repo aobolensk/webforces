@@ -1,3 +1,4 @@
+
 .content {
     min-height: calc(100vh - 180px);
 }
@@ -19,6 +20,26 @@
     padding-left: 10;
     border:1px solid #000;
     /* position: relative; */
+}
+
+.alg_description {
+    white-space: normal;
+    width:98%;
+    padding-left: 10;
+    border:1px solid #000;
+    word-wrap: normal;
+}
+
+.alg_source {
+    width:98%;
+    padding-left: 10;
+    border:1px solid #000;
+}
+
+.test {
+    width:98%;
+    padding-left: 10;
+    border:1px solid #000;
 }
 
 #NewAlgTitle {
