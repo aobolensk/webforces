@@ -57,7 +57,7 @@ class Core:
             logger.warning("Unknown OS, no runners will be added")
 
     def schedule_task(self, alg_id: int) -> int:
-        task = Task(0, alg_id, -1, '')
+        task = Task(0, alg_id, -1, "[IN PROGRESS] scheduled")
         status, task = self.db.addTask(task)
         if status != DBStatus.s_ok:
             logger.error(f"Could not schedule task for algorithm {alg_id}")
