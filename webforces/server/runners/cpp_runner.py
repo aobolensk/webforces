@@ -13,7 +13,7 @@ if TYPE_CHECKING:
     from webforces.server.core import Core
 
 
-class CppLinRunner(Runner):
+class CppRunner(Runner):
     lang_id = Language.lang_cpp
 
     def __init__(self, core: 'Core') -> None:

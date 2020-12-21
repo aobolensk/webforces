@@ -1,4 +1,3 @@
-import platform
 import sys
 import threading
 from typing import List, Optional
@@ -8,8 +7,7 @@ from webforces.server.auth import Auth
 from webforces.server.interface.dbworker import DBWorker
 from webforces.server.interface.runner import Runner
 from webforces.server.mongodbworker import MongoDBWorker
-from webforces.server.runners.cpp_lin_runner import CppLinRunner
-from webforces.server.runners.cpp_win_runner import CppWinRunner
+from webforces.server.runners.cpp_runner import CppRunner
 from webforces.server.structs import DBStatus, RunnerStatus, Task
 
 
@@ -49,12 +47,7 @@ class Core:
         logger.add(sys.stderr, level=level, format=fmt)
 
     def _init_runners(self):
-        if platform.system() == "Linux":
-            self.runners.append(CppLinRunner(self))
-        elif platform.system() == "Windows":
-            self.runners.append(CppWinRunner(self))
-        else:
-            logger.warning("Unknown OS, no runners will be added")
+        self.runners.append(CppRunner(self))
 
     def schedule_task(self, alg_id: int) -> int:
         task = Task(0, alg_id, RunnerStatus.s_scheduled.value, "[IN PROGRESS] scheduled")
