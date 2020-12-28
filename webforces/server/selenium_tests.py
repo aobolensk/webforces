@@ -132,7 +132,8 @@ def test_can_add_algorithm(selenium: WebDriver):
     selenium.find_element_by_id("id_language_0").click()
     selenium.find_element_by_id("NewAlgDescription").send_keys("walp")
     selenium.find_element_by_id("NewAlgCost").send_keys("600")
-    selenium.find_element_by_id("NewAlgSource").send_keys("#include <iostream>\nint main(){std::cout << \"wal\" << std::endl;}")
+    selenium.find_element_by_id("NewAlgSource").send_keys(
+        "#include <iostream>\nint main(){std::cout << \"wal\" << std::endl;}")
     selenium.find_element_by_xpath("//button[@type='submit']").click()
 
     selenium.switch_to.alert.accept()
