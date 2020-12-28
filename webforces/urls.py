@@ -28,6 +28,7 @@ urlpatterns = [
     path('users/<str:user>/', views.UserView.as_view()),
     path('users/<str:user>/update/', views.UpdUserView.as_view()),
     path('store/<int:alg_id>/alg/', views.AlgView.as_view()),
+    path('store/<int:alg_id>/download/', views.DownloadAlgView.as_view()),
     path('store/<int:alg_id>/add_test/', views.AddTestView.as_view()),
     path('store/<int:alg_id>/buy/', views.BuyAlgView.as_view()),
     path('stats/', views.StatsView.as_view()),
