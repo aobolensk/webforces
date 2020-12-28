@@ -3,7 +3,7 @@
 {% block content %}
 <h1>Algorithms store</h1>
 
-<input type="button" onclick="location.href='/add_alg'" value="Add new algorithm" />
+<input type="button" id="AddNewAlgorithmButton" onclick="location.href='/add_alg'" value="Add new algorithm" />
 <br><br>
 
 {% for algorithm in algorithms_preview_list %}

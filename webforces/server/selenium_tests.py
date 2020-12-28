@@ -1,5 +1,7 @@
+import time
 import pytest
 from selenium.webdriver.remote.webdriver import WebDriver
+from webforces.server import selenium_traits
 
 
 base_url: str = "http://127.0.0.1:8000/"
@@ -115,3 +117,68 @@ def test_can_see_statistic_by_superuser(selenium: WebDriver):
     selenium.find_element_by_id("StatisticsButton").click()
 
     assert selenium.current_url == base_url + "stats/"
+
+
+@pytest.mark.web_test
+def test_can_add_algorithm(selenium: WebDriver):
+    selenium.get(base_url)
+    selenium_traits.sign_in_user(selenium)
+
+    selenium.find_element_by_id("StoreButton").click()
+    selenium.find_element_by_id("AddNewAlgorithmButton").click()
+
+    alg_title = "test_alg" + str(time.time()) + "|" + str(time.monotonic())
+    selenium.find_element_by_id("NewAlgTitle").send_keys(alg_title)
+    selenium.find_element_by_id("id_language_0").click()
+    selenium.find_element_by_id("NewAlgDescription").send_keys("walp")
+    selenium.find_element_by_id("NewAlgCost").send_keys("600")
+    selenium.find_element_by_id("NewAlgSource").send_keys(
+        "#include <iostream>\nint main(){std::cout << \"wal\" << std::endl;}")
+    selenium.find_element_by_xpath("//button[@type='submit']").click()
+
+    selenium.switch_to.alert.accept()
+    selenium.find_element_by_xpath("//h2[text()='" + alg_title + "']")
+
+
+@pytest.mark.web_test
+def test_can_add_test_to_algorithm(selenium: WebDriver):
+    selenium.get(base_url)
+    selenium_traits.sign_in_user(selenium)
+
+    selenium.find_element_by_id("StoreButton").click()
+    selenium.find_element_by_id("AddNewAlgorithmButton").click()
+    alg_title = selenium_traits.add_new_alg(selenium)
+
+    elem = selenium.find_element_by_xpath("//h2[text()='" + alg_title + "']")
+    elem.find_element_by_xpath("../a").click()
+
+    selenium.find_element_by_id("AddTestButton").click()
+    selenium.find_element_by_id("Title").send_keys("test1")
+    selenium.find_element_by_id("NewTestInput").send_keys("wal")
+    selenium.find_element_by_id("NewTestOutput").send_keys("wal")
+    selenium.find_element_by_xpath("//button[@type='submit']").click()
+
+    selenium.switch_to.alert.accept()
+    selenium.find_element_by_xpath("//h2[text()='Found 1 tests']")
+
+
+@pytest.mark.web_test
+def test_can_run_validation(selenium: WebDriver):
+    selenium.get(base_url)
+    selenium_traits.sign_in_user(selenium)
+
+    selenium.find_element_by_id("StoreButton").click()
+    selenium.find_element_by_id("AddNewAlgorithmButton").click()
+    alg_title = selenium_traits.add_new_alg(selenium)
+
+    elem = selenium.find_element_by_xpath("//h2[text()='" + alg_title + "']")
+    elem.find_element_by_xpath("../a").click()
+
+    selenium.find_element_by_id("AddTestButton").click()
+    selenium.find_element_by_id("Title").send_keys("test1")
+    selenium.find_element_by_id("NewTestInput").send_keys("wal")
+    selenium.find_element_by_id("NewTestOutput").send_keys("wal")
+    selenium.find_element_by_xpath("//button[@type='submit']").click()
+    selenium.switch_to.alert.accept()
+
+    selenium.find_element_by_id("RunTestsButton").click()
