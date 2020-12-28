@@ -4,8 +4,9 @@ from django.contrib import messages
 from django.contrib.auth import authenticate, login
 from django.contrib.auth.forms import AuthenticationForm, UserCreationForm
 from django.core.exceptions import PermissionDenied
+from django.http.response import HttpResponse
 from django.shortcuts import redirect, render
-from django.views.generic.base import RedirectView, TemplateView
+from django.views.generic.base import RedirectView, TemplateView, View
 from django.views.generic.edit import FormView
 from loguru import logger
 
@@ -263,6 +264,18 @@ class AlgView(MainPageView):
             if not is_available:
                 return redirect('/Error403')
         return super().dispatch(request, *args, **kwargs)
+
+
+class DownloadAlgView(View):
+    def get(self, _, alg_id):
+        core = Core()
+        status, alg = core.db.getAlgByID(alg_id)
+        if status != DBStatus.s_ok:
+            messages.error(self.request, "Internal error: can not find current user!")
+            raise Exception
+        response = HttpResponse(alg.source, content_type="application/other")
+        response['Content-Disposition'] = 'inline; filename=alg.cpp'
+        return response
 
 
 class RunTaskView(RedirectView):
