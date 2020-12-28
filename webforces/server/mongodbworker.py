@@ -1,3 +1,4 @@
+import os
 from typing import Tuple, List
 
 import pymongo
@@ -13,7 +14,7 @@ class MongoDBWorker(dbworker.DBWorker):
     db_name: str = ''
 
     def __init__(self, validation=False) -> None:
-        if not validation:
+        if not validation and not os.getenv("WEBFORCES_VALIDATION") == "1":
             self.db_url = MONGODB_PROPERTIES['production_url']
             self.db_name = "webforces"
         else:
