@@ -1,7 +1,7 @@
 pymongo==3.11.0
 requests==2.22.0
 loguru==0.5.3
-Django==3.1.12
+Django==3.1.13
 PyQt5==5.15.1
 djoser==2.1.0
 djangorestframework==3.12.2
